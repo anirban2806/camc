@@ -1147,10 +1147,61 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
     return;
   }
 
-  // SUCCESS
-  document.getElementById('success-overlay').classList.add('show');
-  document.getElementById('progressFill').style.width = '100%';
-  document.getElementById('progressLabel').textContent = '100% complete';
+ // SUCCESS — Send data to Google Sheets
+const formData = {
+  name: document.getElementById('name').value,
+  email: document.getElementById('email').value,
+  roll: document.getElementById('roll').value,
+  phone: document.getElementById('phone').value,
+  specialization: document.getElementById('specialization').value,
+  fields: [...document.querySelectorAll('input[name="fields"]:checked')].map(el => el.value).join(', '),
+  opportunity: [...document.querySelectorAll('input[name="opportunity"]:checked')].map(el => el.value).join(', '),
+  jobRoles: document.getElementById('jobRoles').value,
+  expectedCTC: document.getElementById('expectedCTC').value,
+  preferredLocation: document.getElementById('preferredLocation').value,
+  board10: document.getElementById('board10').value,
+  school10: document.getElementById('school10').value,
+  year10: document.getElementById('year10').value,
+  pct10: document.getElementById('pct10').value,
+  board12: document.getElementById('board12').value,
+  school12: document.getElementById('school12').value,
+  year12: document.getElementById('year12').value,
+  pct12: document.getElementById('pct12').value,
+  univGrad: document.getElementById('univGrad').value,
+  degreeGrad: document.getElementById('degreeGrad').value,
+  yearGrad: document.getElementById('yearGrad').value,
+  cgpaGrad: document.getElementById('cgpaGrad').value,
+  univPG: document.getElementById('univPG').value,
+  degreePG: document.getElementById('degreePG').value,
+  statusPG: document.getElementById('statusPG').value,
+  yearPG: document.getElementById('yearPG').value,
+  cgpaPG: document.getElementById('cgpaPG').value,
+  techSkills: document.getElementById('techSkills').value,
+  softSkills: document.getElementById('softSkills').value,
+  languages: document.getElementById('languages').value,
+  linkedin: document.getElementById('linkedin').value,
+  github: document.getElementById('github').value,
+};
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWiuq1NYNFzAcZZaBVZCfisa2x9kZ04mkEfsegv1jdnTfXumh9NRUeyojSOcxHGW7_IA/exec'; // 👈 replace this
+
+fetch(SCRIPT_URL, {
+  method: 'POST',
+  body: JSON.stringify(formData)
+})
+.then(res => res.json())
+.then(data => {
+  if (data.result === 'success') {
+    document.getElementById('success-overlay').classList.add('show');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressLabel').textContent = '100% complete';
+  } else {
+    alert('Something went wrong. Please try again.');
+  }
+})
+.catch(() => {
+  alert('Submission failed. Check your internet connection and try again.');
+});
 });
 
 // Live validation feedback
