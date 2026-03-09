@@ -3,394 +3,498 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Training & Placement — Student Registration</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>CAMC Civil Registration Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #f5f2ec;
-    --card: #ffffff;
-    --accent: #1a3a2e;
-    --accent2: #c8a84b;
-    --text: #1c1c1c;
-    --muted: #6b6b6b;
-    --border: #d9d4c8;
-    --error: #b5341f;
-    --success: #1a3a2e;
-    --input-bg: #faf9f6;
-    --section-bg: #1a3a2e;
+    --bg: #050a0e;
+    --card: #0a1628;
+    --accent: #00ffe5;
+    --accent2: #ff2d78;
+    --accent3: #b400ff;
+    --text: #e0f7ff;
+    --muted: #5a8a99;
+    --border: #0d2a3a;
+    --error: #ff2d78;
+    --input-bg: #071420;
+    --section-bg: #060f1a;
+    --neon-green: #00ffe5;
+    --neon-pink: #ff2d78;
+    --neon-purple: #b400ff;
+    --neon-yellow: #f5e642;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0 0 80px; position:relative; overflow-x:hidden; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,229,0.015) 2px, rgba(0,255,229,0.015) 4px); }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 0 0 80px;
+  @keyframes floatUp { 0%,100%{transform:translateY(0px) rotate(0deg);} 50%{transform:translateY(-10px) rotate(2deg);} }
+
+  /* ── RICH BACKGROUND CANVAS ── */
+  #bg-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:0.7; }
+
+  /* ── PAGE LAYOUT needs z-index above canvas ── */
+  .header, .civil-strip, .progress-bar-wrap, .form-wrapper, .footer { position:relative; z-index:1; }
+
+  /* ── MORE ANIMATIONS ── */
+  @keyframes drift { 0%{transform:translateX(0) translateY(0) rotate(0deg);} 33%{transform:translateX(18px) translateY(-12px) rotate(4deg);} 66%{transform:translateX(-10px) translateY(8px) rotate(-3deg);} 100%{transform:translateX(0) translateY(0) rotate(0deg);} }
+  @keyframes spin-slow { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:0.3;} 50%{transform:scale(1.08);opacity:0.6;} }
+  @keyframes slide-in-up { from{opacity:0;transform:translateY(28px);} to{opacity:1;transform:translateY(0);} }
+  @keyframes shimmer { 0%{background-position:-200% center;} 100%{background-position:200% center;} }
+  @keyframes draw-line { from{stroke-dashoffset:400;} to{stroke-dashoffset:0;} }
+  @keyframes neon-flicker { 0%,100%{opacity:1;} 92%{opacity:1;} 93%{opacity:0.4;} 94%{opacity:1;} 96%{opacity:0.6;} 97%{opacity:1;} }
+
+  /* ── SECTION ENTRANCE ── */
+  .section { 
+    animation: slide-in-up 0.5s ease both;
+    border-left: 4px solid var(--neon-green) !important;
+    transition: box-shadow 0.3s, transform 0.3s;
   }
+  .section:hover { box-shadow: 0 0 30px rgba(0,255,229,0.18), 0 0 60px rgba(0,255,229,0.06) !important; transform: translateY(-2px); }
+  .section:nth-child(1){animation-delay:0.05s;}
+  .section:nth-child(2){animation-delay:0.1s;}
+  .section:nth-child(3){animation-delay:0.15s;}
+  .section:nth-child(4){animation-delay:0.2s;}
+  .section:nth-child(5){animation-delay:0.25s;}
+  .section:nth-child(6){animation-delay:0.3s;}
+
+  /* ── ENHANCED INPUTS ── */
+  input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+    border-color:var(--neon-green) !important;
+    box-shadow:0 0 0 2px rgba(0,255,229,0.25), 0 0 16px rgba(0,255,229,0.15) !important;
+    background: #071e2e !important;
+    color: var(--neon-green) !important;
+    transform: translateY(-1px);
+  }
+
+  /* ── SUBMIT BUTTON NEON ── */
+  .submit-btn {
+    background: transparent !important;
+    border: 2px solid var(--neon-green) !important;
+    color: var(--neon-green) !important;
+    font-family: 'Orbitron', sans-serif !important;
+    text-shadow: 0 0 10px var(--neon-green) !important;
+    box-shadow: 0 0 20px rgba(0,255,229,0.3), inset 0 0 20px rgba(0,255,229,0.05) !important;
+    letter-spacing: 2px !important;
+    animation: neon-pulse-btn 2s ease-in-out infinite !important;
+  }
+  .submit-btn:hover {
+    background: rgba(0,255,229,0.1) !important;
+    box-shadow: 0 0 40px rgba(0,255,229,0.5), inset 0 0 30px rgba(0,255,229,0.1) !important;
+    transform: translateY(-2px) !important;
+  }
+  @keyframes neon-pulse-btn { 0%,100%{box-shadow:0 0 20px rgba(0,255,229,0.3),inset 0 0 20px rgba(0,255,229,0.05);} 50%{box-shadow:0 0 35px rgba(0,255,229,0.5),inset 0 0 25px rgba(0,255,229,0.1);} }
+
+  /* ── CHIP HOVER BOUNCE ── */
+  .chip-group label:hover { transform: translateY(-1px) scale(1.03); }
+  .chip-group input:checked+label { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(26,58,46,0.25); }
+
+  /* ── FILE DROP ZONE PULSE ── */
+  .file-drop-zone:hover { animation: pulse-ring 1.2s ease-in-out infinite; }
+
+  /* ── PROGRESS BAR GLOW ── */
+  .progress-fill { background: linear-gradient(90deg, var(--neon-green), var(--neon-pink)) !important; box-shadow: 0 0 16px rgba(0,255,229,0.8), 0 0 32px rgba(0,255,229,0.4); }
+
+  /* ── SECTION HEADER accent line ── */
+  .section-header { border-left: 3px solid var(--neon-green); border-bottom: 1px solid rgba(0,255,229,0.15); }
+
+  /* ── FLOATING BG SVGS (positioned fixed behind everything) ── */
+  .bg-float-wrap { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .bg-float { position:absolute; opacity:0.07; filter: drop-shadow(0 0 3px rgba(0,255,229,0.4)); }
+  .bg-float.f1 { top:8%; left:2%; animation:drift 14s ease-in-out infinite; }
+  .bg-float.f2 { top:22%; right:3%; animation:drift 18s ease-in-out infinite 3s; }
+  .bg-float.f3 { top:45%; left:1%; animation:drift 12s ease-in-out infinite 6s; }
+  .bg-float.f4 { top:65%; right:2%; animation:drift 16s ease-in-out infinite 2s; }
+  .bg-float.f5 { top:80%; left:4%; animation:drift 20s ease-in-out infinite 8s; }
+  .bg-float.f6 { top:35%; right:1%; animation:spin-slow 30s linear infinite; opacity:0.05; filter: drop-shadow(0 0 5px rgba(180,0,255,0.5)); }
+
+  /* ── SUBSECTION LABEL animated underline ── */
+  .subsection-label { position:relative; }
+
+  /* ── FORM WRAPPER decorative side lines ── */
+  .form-wrapper::before {
+    content:'';
+    position:absolute;
+    left:-2px; top:0; bottom:0; width:3px;
+    background: linear-gradient(180deg, transparent, var(--neon-green), var(--neon-pink), transparent);
+    border-radius:100px;
+    opacity:0.3;
+  }
+
+  /* ── SECTION BODY dividers get color ── */
+  .divider { border-top-color: rgba(0,255,229,0.15) !important; }
+
 
   /* HEADER */
   .header {
-    background: var(--accent);
+    background: linear-gradient(135deg, #020912 0%, #050f1a 40%, #0a0520 100%);
     color: white;
-    padding: 48px 24px 40px;
+    padding: 56px 24px 56px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    border-bottom: 2px solid var(--neon-green);
+    box-shadow: 0 4px 40px rgba(0,255,229,0.15);
   }
   .header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 220px; height: 220px;
-    border-radius: 50%;
-    background: rgba(200,168,75,0.15);
+    content:'';
+    position:absolute; inset:0;
+    background-image: linear-gradient(rgba(0,255,229,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(0,255,229,0.04) 1px,transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
   }
   .header::after {
-    content: '';
-    position: absolute;
-    bottom: -40px; left: -40px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: rgba(200,168,75,0.1);
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--neon-green), var(--neon-pink), var(--neon-purple), transparent);
+    animation: scan-line 3s linear infinite;
+  }
+  @keyframes scan-line { 0%{opacity:0.4;} 50%{opacity:1;} 100%{opacity:0.4;} }
+  .h-deco1 { position:absolute; top:-60px; right:-60px; width:220px; height:220px; border-radius:50%; background:rgba(180,0,255,0.08); border:1px solid rgba(180,0,255,0.2); box-shadow:0 0 60px rgba(180,0,255,0.15); }
+  .h-deco2 { position:absolute; bottom:-40px; left:-40px; width:160px; height:160px; border-radius:50%; background:rgba(0,255,229,0.06); border:1px solid rgba(0,255,229,0.15); box-shadow:0 0 40px rgba(0,255,229,0.1); }
+  /* Bridge SVG right */
+  .h-bridge { position:absolute; bottom:0; right:20px; opacity:0.13; }
+  /* Set square SVG left */
+  .h-setsq { position:absolute; bottom:0; left:20px; opacity:0.11; }
+  /* Ruler bottom line */
+  .h-ruler {
+    position:absolute; bottom:0; left:0; right:0; height:5px;
+    background: repeating-linear-gradient(90deg, var(--neon-green) 0,var(--neon-green) 8px, transparent 8px, transparent 18px);
+    opacity:0.45;
   }
   .header-badge {
-    display: inline-block;
-    background: var(--accent2);
-    color: var(--accent);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 6px 16px;
-    border-radius: 100px;
-    margin-bottom: 16px;
+    display:inline-block; background:transparent; color:var(--neon-green); border:1px solid var(--neon-green);
+    font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+    padding:6px 18px; border-radius:3px; margin-bottom:16px; position:relative; z-index:1;
+    box-shadow:0 0 12px rgba(0,255,229,0.4); font-family:'Share Tech Mono',monospace; animation:neon-flicker 4s ease-in-out infinite;
   }
   .header h1 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(26px, 5vw, 42px);
-    font-weight: 700;
-    line-height: 1.15;
-    margin-bottom: 10px;
+    font-family:'Orbitron',sans-serif; font-size:clamp(20px,4vw,36px); font-weight:900;
+    line-height:1.15; margin-bottom:10px; position:relative; z-index:1;
+    color:var(--neon-green); text-shadow:0 0 20px rgba(0,255,229,0.8), 0 0 40px rgba(0,255,229,0.4); letter-spacing:2px;
   }
-  .header p {
-    font-size: 15px;
-    color: rgba(255,255,255,0.7);
-    max-width: 520px;
-    margin: 0 auto;
-    line-height: 1.6;
+  .header p { font-size:14px; color:rgba(0,255,229,0.6); max-width:520px; margin:0 auto; line-height:1.6; position:relative; z-index:1; font-family:'Share Tech Mono',monospace; letter-spacing:0.5px; }
+
+  /* CIVIL ICONS STRIP */
+  .civil-strip {
+    background:#020912; padding:10px 0;
+    display:flex; align-items:center; justify-content:center; gap:40px; flex-wrap:wrap;
+    overflow:hidden;
+    border-bottom:1px solid rgba(0,255,229,0.1);
   }
+  .civil-strip svg { opacity:0.6; filter: drop-shadow(0 0 4px rgba(0,255,229,0.5)); }
 
   /* PROGRESS */
-  .progress-bar-wrap {
-    background: var(--accent);
-    padding: 0 24px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .progress-track {
-    max-width: 760px;
-    margin: 0 auto;
-    background: rgba(255,255,255,0.15);
-    height: 4px;
-    border-radius: 100px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent2);
-    border-radius: 100px;
-    width: 0%;
-    transition: width 0.4s cubic-bezier(.4,0,.2,1);
-  }
-  .progress-label {
-    text-align: right;
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    margin-top: 6px;
-    font-weight: 500;
-  }
+  .progress-bar-wrap { background:#020912; padding:0 24px 18px; position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(0,255,229,0.1); }
+  .progress-track { max-width:760px; margin:0 auto; background:rgba(0,255,229,0.08); height:3px; border-radius:0; overflow:hidden; border:1px solid rgba(0,255,229,0.15); }
+  .progress-fill { height:100%; background:var(--accent2); border-radius:100px; width:0%; transition:width 0.4s cubic-bezier(.4,0,.2,1); }
+  .progress-label { text-align:right; font-size:11px; color:var(--neon-green); margin-top:6px; font-weight:500; font-family:'Share Tech Mono',monospace; letter-spacing:1px; text-shadow:0 0 8px rgba(0,255,229,0.5); }
 
   /* FORM WRAPPER */
-  .form-wrapper {
-    max-width: 760px;
-    margin: 32px auto 0;
-    padding: 0 16px;
-  }
+  .form-wrapper { max-width:760px; margin:32px auto 0; padding:0 16px; }
 
   /* SECTION */
-  .section {
-    background: var(--card);
-    border-radius: 16px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    border: 1px solid var(--border);
-  }
-  .section-header {
-    background: var(--section-bg);
-    color: white;
-    padding: 18px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-icon {
-    width: 36px; height: 36px;
-    background: rgba(200,168,75,0.2);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .section-header h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 17px;
-    font-weight: 600;
-  }
-  .section-header p {
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    margin-top: 2px;
-  }
-  .section-body { padding: 24px; }
+  .section { background:var(--card); border-radius:4px; margin-bottom:20px; overflow:hidden; box-shadow:0 0 20px rgba(0,0,0,0.5); border:1px solid rgba(0,255,229,0.12); }
+  .section-header { background:linear-gradient(90deg, #030d18, #060f1a); color:white; padding:18px 24px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(0,255,229,0.1); }
+  .section-icon { width:36px; height:36px; background:rgba(0,255,229,0.08); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; border:1px solid rgba(0,255,229,0.2); box-shadow:0 0 10px rgba(0,255,229,0.1); }
+  .section-header h2 { font-family:'Orbitron',sans-serif; font-size:14px; font-weight:700; color:var(--neon-green); letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,229,0.5); }
+  .section-header p { font-size:11px; color:rgba(0,255,229,0.4); margin-top:2px; font-family:'Share Tech Mono',monospace; letter-spacing:0.5px; }
+  .section-body { padding:24px; background:var(--card); }
 
   /* FIELD */
-  .field {
-    margin-bottom: 22px;
-  }
-  .field:last-child { margin-bottom: 0; }
+  .field { margin-bottom:22px; }
+  .field:last-child { margin-bottom:0; }
+  label { display:block; font-size:12px; font-weight:600; color:rgba(0,255,229,0.7); margin-bottom:7px; letter-spacing:1px; text-transform:uppercase; font-family:'Share Tech Mono',monospace; }
+  label .req { color:var(--neon-pink); margin-left:3px; text-shadow:0 0 6px rgba(255,45,120,0.8); }
+  label .hint { font-weight:400; color:rgba(0,255,229,0.3); font-size:11px; margin-left:6px; }
 
-  label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 7px;
-    letter-spacing: 0.2px;
+  input[type="text"], input[type="email"], input[type="number"], select, textarea {
+    width:100%; background:var(--input-bg); border:1px solid rgba(0,255,229,0.15); border-radius:3px;
+    padding:11px 14px; font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--neon-green);
+    transition:border-color 0.2s,box-shadow 0.2s; outline:none; appearance:none;
+    caret-color:var(--neon-green);
   }
-  label .req { color: var(--error); margin-left: 3px; }
-  label .hint {
-    font-weight: 400;
-    color: var(--muted);
-    font-size: 12px;
-    margin-left: 6px;
-  }
+  input:focus, select:focus, textarea:focus { border-color:var(--neon-green); box-shadow:0 0 0 1px var(--neon-green), 0 0 16px rgba(0,255,229,0.2); }
+  input.error, select.error, textarea.error { border-color:var(--neon-pink); box-shadow:0 0 0 1px var(--neon-pink), 0 0 12px rgba(255,45,120,0.2); }
+  textarea { resize:vertical; min-height:90px; line-height:1.5; }
+  select { cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; }
+  .field-error { font-size:11px; color:var(--neon-pink); margin-top:5px; display:none; font-family:'Share Tech Mono',monospace; letter-spacing:0.5px; text-shadow:0 0 6px rgba(255,45,120,0.5); }
+  .field-error.show { display:block; }
 
-  input[type="text"],
-  input[type="email"],
-  input[type="number"],
-  select,
-  textarea {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 11px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-    appearance: none;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(26,58,46,0.1);
-  }
-  input.error, select.error, textarea.error {
-    border-color: var(--error);
-    box-shadow: 0 0 0 3px rgba(181,52,31,0.08);
-  }
-  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
-  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-
-  .field-error { font-size: 12px; color: var(--error); margin-top: 5px; display: none; }
-  .field-error.show { display: block; }
+  /* OTHER INPUT */
+  .other-input-wrap { display:none; margin-top:8px; }
+  .other-input-wrap.show { display:block; }
+  .other-input-wrap input { border-color:rgba(255,230,66,0.4); background:#071018; color:var(--neon-yellow); }
 
   /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  @media(max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  @media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr;}}
 
   /* FILE UPLOAD */
-  .file-upload-wrap {
-    position: relative;
-  }
-  .file-drop-zone {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 20px 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--input-bg);
-    position: relative;
-  }
-  .file-drop-zone:hover, .file-drop-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(26,58,46,0.04);
-  }
-  .file-drop-zone input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    border: none; box-shadow: none; padding: 0;
-  }
-  .file-drop-zone input[type="file"]:focus { box-shadow: none; }
-  .file-icon { font-size: 28px; margin-bottom: 6px; }
-  .file-drop-zone .file-label { font-size: 13px; font-weight: 600; color: var(--accent); }
-  .file-drop-zone .file-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
-  .file-preview {
-    display: none;
-    margin-top: 10px;
-    background: #f0f4f2;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--accent);
-    align-items: center;
-    gap: 8px;
-  }
-  .file-preview.show { display: flex; }
-  .file-preview .fname { flex: 1; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .file-preview .fsize { font-size: 11px; color: var(--muted); white-space: nowrap; }
-  .file-preview .fremove { cursor: pointer; font-size: 16px; color: var(--error); line-height: 1; flex-shrink: 0; }
-  .file-drop-zone.has-file { border-color: var(--accent); background: #f0f4f2; }
+  .file-drop-zone { border:1px dashed rgba(0,255,229,0.25); border-radius:3px; padding:20px 16px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--input-bg); position:relative; }
+  .file-drop-zone:hover,.file-drop-zone.drag-over { border-color:var(--neon-green); background:rgba(0,255,229,0.04); box-shadow:0 0 20px rgba(0,255,229,0.1); }
+  .file-drop-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; border:none; box-shadow:none; padding:0; }
+  .file-drop-zone input[type="file"]:focus { box-shadow:none; }
+  .file-icon { font-size:28px; margin-bottom:6px; }
+  .file-drop-zone .file-label { font-size:12px; font-weight:600; color:var(--neon-green); font-family:'Share Tech Mono',monospace; letter-spacing:1px; text-shadow:0 0 8px rgba(0,255,229,0.4); }
+  .file-drop-zone .file-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+  .file-preview { display:none; margin-top:10px; background:rgba(0,255,229,0.06); border:1px solid rgba(0,255,229,0.2); border-radius:3px; padding:10px 14px; font-size:12px; color:var(--neon-green); align-items:center; gap:8px; font-family:'Share Tech Mono',monospace; }
+  .file-preview.show { display:flex; }
+  .file-preview .fname { flex:1; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .file-preview .fsize { font-size:11px; color:var(--muted); white-space:nowrap; }
+  .file-preview .fremove { cursor:pointer; font-size:16px; color:var(--error); line-height:1; flex-shrink:0; }
+  .file-drop-zone.has-file { border-color:var(--neon-green); background:rgba(0,255,229,0.04); box-shadow:0 0 15px rgba(0,255,229,0.12); }
 
-  /* CHECKBOXES / CHIPS */
-  .chip-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .chip-group input[type="checkbox"] { display: none; }
-  .chip-group label {
-    margin: 0;
-    padding: 7px 14px;
-    background: var(--input-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 100px;
-    font-size: 13px;
-    font-weight: 400;
-    cursor: pointer;
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .chip-group input:checked + label {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-    font-weight: 500;
-  }
-  .chip-group label:hover { border-color: var(--accent); color: var(--accent); }
+  /* CHIPS */
+  .chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+  .chip-group input[type="checkbox"] { display:none; }
+  .chip-group label { margin:0; padding:7px 14px; background:var(--input-bg); border:1.5px solid rgba(0,255,229,0.2); border-radius:3px; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.15s; user-select:none; color:var(--muted); letter-spacing:0.5px; }
+  .chip-group input:checked+label { background:rgba(0,255,229,0.1); border-color:var(--neon-green); color:var(--neon-green); font-weight:600; box-shadow:0 0 12px rgba(0,255,229,0.2); }
+  .chip-group label:hover { border-color:var(--neon-green); color:var(--neon-green); box-shadow:0 0 8px rgba(0,255,229,0.15); }
 
   /* RADIO */
-  .radio-group { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-  .radio-option { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .radio-option input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
-  .radio-option span { font-size: 14px; }
+  .radio-group { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+  .radio-option { display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .radio-option input[type="radio"] { accent-color:var(--neon-green); width:16px; height:16px; cursor:pointer; }
+  .radio-option span { font-size:13px; color:rgba(0,255,229,0.7); font-family:'Share Tech Mono',monospace; }
 
-  /* REPEATER (certifications) */
-  .repeater-item {
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-    background: var(--input-bg);
-    position: relative;
-  }
-  .repeater-item .remove-btn {
-    position: absolute; top: 12px; right: 12px;
-    background: none; border: none; cursor: pointer;
-    color: var(--error); font-size: 18px; line-height: 1;
-    padding: 2px 6px; border-radius: 4px;
-    transition: background 0.15s;
-  }
-  .repeater-item .remove-btn:hover { background: rgba(181,52,31,0.08); }
-  .add-btn {
-    display: flex; align-items: center; gap: 6px;
-    background: none; border: 2px dashed var(--border);
-    border-radius: 8px; padding: 10px 16px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
-    color: var(--accent); cursor: pointer; width: 100%;
-    justify-content: center; transition: all 0.2s;
-    margin-top: 4px;
-  }
-  .add-btn:hover { border-color: var(--accent); background: rgba(26,58,46,0.04); }
+  /* REPEATER */
+  .repeater-item { border:1px solid rgba(0,255,229,0.12); border-radius:3px; padding:16px; margin-bottom:12px; background:#050e1a; position:relative; }
+  .repeater-item .remove-btn { position:absolute; top:12px; right:12px; background:none; border:none; cursor:pointer; color:var(--error); font-size:18px; line-height:1; padding:2px 6px; border-radius:4px; transition:background 0.15s; }
+  .repeater-item .remove-btn:hover { background:rgba(181,52,31,0.08); }
+  .add-btn { display:flex; align-items:center; gap:6px; background:none; border:1px dashed rgba(0,255,229,0.2); border-radius:3px; padding:10px 16px; font-family:'Share Tech Mono',monospace; font-size:12px; font-weight:600; color:rgba(0,255,229,0.5); cursor:pointer; width:100%; justify-content:center; transition:all 0.2s; margin-top:4px; letter-spacing:1px; }
+  .add-btn:hover { border-color:var(--neon-green); color:var(--neon-green); background:rgba(0,255,229,0.04); box-shadow:0 0 12px rgba(0,255,229,0.1); }
 
   /* DIVIDER */
-  .divider {
-    border: none; border-top: 1.5px solid var(--border);
-    margin: 22px 0;
-  }
+  .divider { border:none; border-top:1.5px solid var(--border); margin:22px 0; }
 
-  /* SUBSECTION LABEL */
-  .subsection-label {
-    font-family: 'Fraunces', serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--accent2);
-    display: inline-block;
-  }
+  /* SUBSECTION */
+  .subsection-label { font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; color:var(--neon-green); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--neon-pink); display:inline-block; letter-spacing:2px; text-shadow:0 0 10px rgba(0,255,229,0.5); }
 
   /* SUBMIT */
-  .submit-zone {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 28px 24px;
-    text-align: center;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  }
-  .submit-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 15px 48px;
-    font-family: 'Fraunces', serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.3px;
-  }
-  .submit-btn:hover { background: #0f2a1f; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,46,0.25); }
-  .submit-btn:active { transform: translateY(0); }
-  .submit-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .submit-zone { background:var(--card); border-radius:4px; padding:28px 24px; text-align:center; border:1px solid rgba(0,255,229,0.15); box-shadow:0 0 30px rgba(0,0,0,0.5); }
+  .submit-btn { background:var(--accent); color:white; border:none; border-radius:10px; padding:15px 48px; font-family:'Orbitron',sans-serif; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.2s; letter-spacing:0.3px; }
+  .submit-btn:hover { background:#0f2a1f; transform:translateY(-1px); box-shadow:0 6px 20px rgba(26,58,46,0.25); }
+  .submit-btn:active { transform:translateY(0); }
+  .submit-note { font-size:11px; color:rgba(0,255,229,0.3); margin-top:10px; font-family:'Share Tech Mono',monospace; }
 
-  /* SUCCESS OVERLAY */
-  #success-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 999;
-    background: rgba(26,58,46,0.95);
-    align-items: center; justify-content: center;
-    text-align: center; color: white;
-    padding: 24px;
-    flex-direction: column;
-    gap: 20px;
-  }
-  #success-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  .success-icon { font-size: 64px; }
-  .success-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; }
-  .success-sub { color: rgba(255,255,255,0.7); font-size: 16px; max-width: 400px; line-height: 1.6; }
+  /* FOOTER */
+  .footer { max-width:760px; margin:24px auto 0; padding:0 16px 40px; }
+  .footer-card { background:#030d18; border-radius:4px; overflow:hidden; box-shadow:0 0 40px rgba(0,255,229,0.08); position:relative; border:1px solid rgba(0,255,229,0.15); }
+  .footer-card::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(0,255,229,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,229,0.03) 1px,transparent 1px); background-size:24px 24px; pointer-events:none; }
+  .footer-section { padding:20px 24px; position:relative; z-index:1; }
+  .footer-section+.footer-section { border-top:1px solid rgba(255,255,255,0.1); }
+  .footer-tag { display:inline-block; background:transparent; color:var(--neon-pink); border:1px solid var(--neon-pink); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:3px 10px; border-radius:2px; margin-bottom:10px; font-family:'Share Tech Mono',monospace; box-shadow:0 0 10px rgba(255,45,120,0.3); }
+  .footer-name { font-family:'Orbitron',sans-serif; font-size:15px; font-weight:700; color:var(--neon-green); margin-bottom:6px; text-shadow:0 0 12px rgba(0,255,229,0.5); }
+  .footer-detail { font-size:12px; color:rgba(0,255,229,0.6); line-height:1.9; font-family:'Share Tech Mono',monospace; }
+  .footer-detail a { color:var(--neon-yellow); text-decoration:none; border-bottom:1px solid rgba(245,230,66,0.3); transition:all 0.2s; }
+  .footer-detail a:hover { border-color:var(--accent2); }
+  .footer-divider-label { padding:8px 24px; background:rgba(0,255,229,0.04); font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(0,255,229,0.3); text-align:center; position:relative; z-index:1; font-family:'Share Tech Mono',monospace; border-top:1px solid rgba(0,255,229,0.08); border-bottom:1px solid rgba(0,255,229,0.08); }
+  .footer-devs { padding:20px 24px; position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:560px){.footer-devs{grid-template-columns:1fr;}}
+  .dev-card { background:rgba(0,255,229,0.03); border:1px solid rgba(0,255,229,0.12); border-radius:3px; padding:14px; transition:all 0.2s; }
+  .dev-card:hover { border-color:rgba(0,255,229,0.3); box-shadow:0 0 20px rgba(0,255,229,0.08); }
+  .dev-dept { font-size:9px; color:var(--neon-pink); font-weight:600; letter-spacing:1.5px; margin-bottom:4px; text-transform:uppercase; font-family:'Share Tech Mono',monospace; text-shadow:0 0 6px rgba(255,45,120,0.4); }
+  .dev-name { font-family:'Orbitron',sans-serif; font-size:13px; font-weight:700; color:var(--neon-green); margin-bottom:6px; text-shadow:0 0 10px rgba(0,255,229,0.4); }
+  .dev-info { font-size:11px; color:rgba(0,255,229,0.5); line-height:1.8; font-family:'Share Tech Mono',monospace; }
+  .dev-info a { color:var(--neon-yellow); text-decoration:none; border-bottom:1px solid rgba(245,230,66,0.25); transition:all 0.2s; }
+  .dev-info a:hover { border-color:var(--accent2); }
+  .footer-bottom { text-align:center; padding:12px 24px 16px; font-size:10px; color:rgba(0,255,229,0.2); position:relative; z-index:1; border-top:1px solid rgba(0,255,229,0.06); font-family:'Share Tech Mono',monospace; letter-spacing:2px; }
 
-  /* SCROLL SMOOTH */
-  html { scroll-behavior: smooth; }
+  /* SUCCESS */
+  #success-overlay { display:none; position:fixed; inset:0; z-index:999; background:rgba(2,9,18,0.97); align-items:center; justify-content:center; text-align:center; color:var(--neon-green); padding:24px; flex-direction:column; gap:20px; border:2px solid var(--neon-green); }
+  #success-overlay.show { display:flex; animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .success-icon{font-size:64px;} .success-title{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:700;}
+  .success-sub{color:rgba(0,255,229,0.5);font-size:13px;max-width:400px;line-height:1.6;font-family:'Share Tech Mono',monospace;}
+  html{scroll-behavior:smooth;}
 </style>
 </head>
 <body>
 
+<!-- FLOATING BG CIVIL ENGINEERING ILLUSTRATIONS -->
+<div class="bg-float-wrap">
+  <!-- Blueprint grid structure top-left -->
+  <svg class="bg-float f1" width="220" height="180" viewBox="0 0 220 180" fill="none">
+    <rect x="10" y="10" width="200" height="160" stroke="#00ffe5" stroke-width="1.5" fill="none"/>
+    <line x1="10" y1="50" x2="210" y2="50" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="10" y1="90" x2="210" y2="90" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="10" y1="130" x2="210" y2="130" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="55" y1="10" x2="55" y2="170" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="110" y1="10" x2="110" y2="170" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="165" y1="10" x2="165" y2="170" stroke="#00ffe5" stroke-width="1"/>
+    <circle cx="110" cy="90" r="8" stroke="#ff2d78" stroke-width="1.5" fill="none"/>
+    <circle cx="55" cy="50" r="4" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <circle cx="165" cy="130" r="4" stroke="#ff2d78" stroke-width="1" fill="none"/>
+  </svg>
+  <!-- Suspension bridge right -->
+  <svg class="bg-float f2" width="300" height="160" viewBox="0 0 300 160" fill="none">
+    <line x1="0" y1="140" x2="300" y2="140" stroke="#00ffe5" stroke-width="2.5"/>
+    <line x1="30" y1="140" x2="30" y2="40" stroke="#00ffe5" stroke-width="2"/>
+    <line x1="270" y1="140" x2="270" y2="40" stroke="#00ffe5" stroke-width="2"/>
+    <path d="M30 40 Q150 10 270 40" stroke="#ff2d78" stroke-width="2" fill="none"/>
+    <line x1="30" y1="40" x2="60" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="30" y1="40" x2="90" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="30" y1="40" x2="120" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="30" y1="40" x2="150" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="270" y1="40" x2="240" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="270" y1="40" x2="210" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="270" y1="40" x2="180" y2="140" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="270" y1="40" x2="150" y2="140" stroke="#00ffe5" stroke-width="1"/>
+  </svg>
+  <!-- Large compass / theodolite left middle -->
+  <svg class="bg-float f3" width="160" height="160" viewBox="0 0 160 160" fill="none">
+    <circle cx="80" cy="80" r="70" stroke="#00ffe5" stroke-width="1.5" fill="none"/>
+    <circle cx="80" cy="80" r="50" stroke="#00ffe5" stroke-width="1" stroke-dasharray="4 4" fill="none"/>
+    <circle cx="80" cy="80" r="6" stroke="#ff2d78" stroke-width="2" fill="none"/>
+    <line x1="80" y1="10" x2="80" y2="150" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="10" y1="80" x2="150" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="80" y1="80" x2="120" y2="30" stroke="#ff2d78" stroke-width="1.5"/>
+    <polygon points="118,24 126,36 114,34" fill="#c8a84b" opacity="0.5"/>
+  </svg>
+  <!-- Arch dam / retaining wall right lower -->
+  <svg class="bg-float f4" width="240" height="140" viewBox="0 0 240 140" fill="none">
+    <path d="M10 130 Q120 20 230 130" stroke="#00ffe5" stroke-width="2" fill="none"/>
+    <line x1="10" y1="130" x2="230" y2="130" stroke="#00ffe5" stroke-width="2"/>
+    <line x1="30" y1="120" x2="30" y2="130" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="55" y1="98" x2="55" y2="130" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="80" y1="80" x2="80" y2="130" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="120" y1="68" x2="120" y2="130" stroke="#ff2d78" stroke-width="1.5"/>
+    <line x1="160" y1="80" x2="160" y2="130" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="185" y1="98" x2="185" y2="130" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="210" y1="120" x2="210" y2="130" stroke="#00ffe5" stroke-width="1.5"/>
+  </svg>
+  <!-- Truss structure bottom left -->
+  <svg class="bg-float f5" width="280" height="100" viewBox="0 0 280 100" fill="none">
+    <line x1="0" y1="80" x2="280" y2="80" stroke="#00ffe5" stroke-width="2"/>
+    <line x1="0" y1="20" x2="280" y2="20" stroke="#00ffe5" stroke-width="2"/>
+    <line x1="0" y1="20" x2="0" y2="80" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="40" y1="20" x2="40" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="80" y1="20" x2="80" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="120" y1="20" x2="120" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="160" y1="20" x2="160" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="200" y1="20" x2="200" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="240" y1="20" x2="240" y2="80" stroke="#00ffe5" stroke-width="1"/>
+    <line x1="280" y1="20" x2="280" y2="80" stroke="#00ffe5" stroke-width="1.5"/>
+    <line x1="0" y1="80" x2="40" y2="20" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="40" y1="20" x2="80" y2="80" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="80" y1="80" x2="120" y2="20" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="120" y1="20" x2="160" y2="80" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="160" y1="80" x2="200" y2="20" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="200" y1="20" x2="240" y2="80" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="240" y1="80" x2="280" y2="20" stroke="#ff2d78" stroke-width="1"/>
+  </svg>
+  <!-- Gear / cog right middle -->
+  <svg class="bg-float f6" width="180" height="180" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="55" stroke="#00ffe5" stroke-width="2" fill="none"/>
+    <circle cx="90" cy="90" r="30" stroke="#ff2d78" stroke-width="1.5" fill="none"/>
+    <circle cx="90" cy="90" r="10" stroke="#00ffe5" stroke-width="2" fill="none"/>
+    <rect x="83" y="20" width="14" height="22" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none"/>
+    <rect x="83" y="138" width="14" height="22" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none"/>
+    <rect x="20" y="83" width="22" height="14" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none"/>
+    <rect x="138" y="83" width="22" height="14" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none"/>
+    <rect x="36" y="36" width="16" height="22" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none" transform="rotate(45 44 47)"/>
+    <rect x="128" y="36" width="16" height="22" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none" transform="rotate(-45 136 47)"/>
+    <rect x="36" y="122" width="16" height="22" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none" transform="rotate(-45 44 133)"/>
+    <rect x="128" y="122" width="16" height="22" rx="3" stroke="#00ffe5" stroke-width="1.5" fill="none" transform="rotate(45 136 133)"/>
+  </svg>
+</div>
+
+<!-- ANIMATED CANVAS DOTS -->
+<canvas id="bg-canvas"></canvas>
+
 <!-- HEADER -->
 <div class="header">
-  <div class="header-badge">Training & Placement Cell</div>
-  <h1>Student Registration Form</h1>
+  <div class="h-deco1"></div>
+  <div class="h-deco2"></div>
+  <div class="h-ruler"></div>
+
+  <!-- Bridge SVG right -->
+  <svg class="h-bridge" width="200" height="90" viewBox="0 0 200 90" fill="none">
+    <line x1="0" y1="80" x2="200" y2="80" stroke="white" stroke-width="3"/>
+    <line x1="20" y1="80" x2="20" y2="24" stroke="white" stroke-width="2"/>
+    <line x1="180" y1="80" x2="180" y2="24" stroke="white" stroke-width="2"/>
+    <path d="M20 24 Q100 2 180 24" stroke="white" stroke-width="2.5" fill="none"/>
+    <line x1="20" y1="24" x2="45" y2="80" stroke="white" stroke-width="1.5"/>
+    <line x1="20" y1="24" x2="72" y2="80" stroke="white" stroke-width="1.5"/>
+    <line x1="20" y1="24" x2="100" y2="80" stroke="white" stroke-width="1.5"/>
+    <line x1="180" y1="24" x2="155" y2="80" stroke="white" stroke-width="1.5"/>
+    <line x1="180" y1="24" x2="128" y2="80" stroke="white" stroke-width="1.5"/>
+    <line x1="180" y1="24" x2="100" y2="80" stroke="white" stroke-width="1.5"/>
+  </svg>
+
+  <!-- Set square SVG left -->
+  <svg class="h-setsq" width="70" height="90" viewBox="0 0 70 90" fill="none">
+    <line x1="10" y1="10" x2="10" y2="80" stroke="white" stroke-width="2.5"/>
+    <line x1="10" y1="80" x2="60" y2="80" stroke="white" stroke-width="2.5"/>
+    <line x1="10" y1="10" x2="60" y2="80" stroke="white" stroke-width="2"/>
+    <line x1="10" y1="32" x2="30" y2="32" stroke="white" stroke-width="1.5"/>
+    <line x1="10" y1="55" x2="38" y2="55" stroke="white" stroke-width="1.5"/>
+  </svg>
+
+  <div class="header-badge">CAMC, IIT Indore</div>
+  <h1>CAMC Civil Registration Form</h1>
   <p>Complete all sections carefully. Your data will be used for placement drives, internship referrals, and batch database management.</p>
+</div>
+
+<!-- CIVIL ENGINEERING ICONS STRIP -->
+<div class="civil-strip">
+  <!-- Building -->
+  <svg width="34" height="36" viewBox="0 0 34 36" fill="none" style="animation:floatUp 6s ease-in-out infinite; filter:drop-shadow(0 0 4px #00ffe5);">
+    <rect x="3" y="12" width="28" height="24" stroke="#ff2d78" stroke-width="1.5" fill="none"/>
+    <rect x="7" y="16" width="5" height="5" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <rect x="22" y="16" width="5" height="5" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <rect x="14" y="23" width="6" height="13" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <line x1="3" y1="12" x2="17" y2="3" stroke="#ff2d78" stroke-width="1.5"/>
+    <line x1="31" y1="12" x2="17" y2="3" stroke="#ff2d78" stroke-width="1.5"/>
+  </svg>
+  <!-- Ruler -->
+  <svg width="120" height="18" viewBox="0 0 120 18" fill="none">
+    <rect x="0" y="4" width="120" height="10" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <line x1="10" y1="4" x2="10" y2="14" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="20" y1="4" x2="20" y2="10" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="30" y1="4" x2="30" y2="14" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="40" y1="4" x2="40" y2="10" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="50" y1="4" x2="50" y2="14" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="60" y1="4" x2="60" y2="10" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="70" y1="4" x2="70" y2="14" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="80" y1="4" x2="80" y2="10" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="90" y1="4" x2="90" y2="14" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="100" y1="4" x2="100" y2="10" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="110" y1="4" x2="110" y2="14" stroke="#ff2d78" stroke-width="1"/>
+  </svg>
+  <!-- Crane -->
+  <svg width="44" height="36" viewBox="0 0 44 36" fill="none" style="animation:floatUp 7s ease-in-out infinite 1.5s;">
+    <line x1="10" y1="32" x2="10" y2="4" stroke="#ff2d78" stroke-width="2"/>
+    <line x1="10" y1="4" x2="40" y2="4" stroke="#ff2d78" stroke-width="1.5"/>
+    <line x1="10" y1="4" x2="5" y2="14" stroke="#ff2d78" stroke-width="1.5"/>
+    <line x1="40" y1="4" x2="36" y2="32" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="24" y1="4" x2="24" y2="16" stroke="#ff2d78" stroke-width="1"/>
+    <rect x="21" y="16" width="6" height="6" stroke="#ff2d78" stroke-width="1" fill="none"/>
+  </svg>
+  <!-- Column / pillar -->
+  <svg width="28" height="36" viewBox="0 0 28 36" fill="none" style="animation:floatUp 8s ease-in-out infinite 3s;">
+    <rect x="2" y="4" width="24" height="3" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <rect x="2" y="29" width="24" height="3" stroke="#ff2d78" stroke-width="1" fill="none"/>
+    <rect x="8" y="7" width="12" height="22" stroke="#ff2d78" stroke-width="1" fill="none"/>
+  </svg>
+  <!-- Triangle / set square mini -->
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatUp 5s ease-in-out infinite 0.5s;">
+    <line x1="4" y1="28" x2="4" y2="4" stroke="#ff2d78" stroke-width="2"/>
+    <line x1="4" y1="28" x2="28" y2="28" stroke="#ff2d78" stroke-width="2"/>
+    <line x1="4" y1="4" x2="28" y2="28" stroke="#ff2d78" stroke-width="1.5"/>
+    <line x1="4" y1="14" x2="14" y2="14" stroke="#ff2d78" stroke-width="1"/>
+  </svg>
+  <!-- Dam / arch -->
+  <svg width="50" height="30" viewBox="0 0 50 30" fill="none" style="animation:floatUp 9s ease-in-out infinite 2s;">
+    <path d="M2 28 Q25 4 48 28" stroke="#ff2d78" stroke-width="1.5" fill="none"/>
+    <line x1="2" y1="28" x2="48" y2="28" stroke="#ff2d78" stroke-width="1.5"/>
+    <line x1="8" y1="24" x2="8" y2="28" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="16" y1="16" x2="16" y2="28" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="25" y1="12" x2="25" y2="28" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="34" y1="16" x2="34" y2="28" stroke="#ff2d78" stroke-width="1"/>
+    <line x1="42" y1="24" x2="42" y2="28" stroke="#ff2d78" stroke-width="1"/>
+  </svg>
 </div>
 
 <!-- PROGRESS -->
@@ -407,33 +511,30 @@
   <div class="section">
     <div class="section-header">
       <div class="section-icon">👤</div>
-      <div>
-        <h2>Personal Details</h2>
-        <p>Basic identification information</p>
-      </div>
+      <div><h2>Personal Details</h2><p>Basic identification information</p></div>
     </div>
     <div class="section-body">
       <div class="grid-2">
         <div class="field">
           <label for="name">Full Name <span class="req">*</span></label>
-          <input type="text" id="name" name="name" placeholder="e.g. Rahul Sharma" required />
+          <input type="text" id="name" name="name" placeholder="e.g. Rahul Sharma" required/>
           <div class="field-error" id="name-err">Please enter your full name.</div>
         </div>
         <div class="field">
           <label for="email">Email Address <span class="req">*</span></label>
-          <input type="email" id="email" name="email" placeholder="you@college.edu" required />
+          <input type="email" id="email" name="email" placeholder="you@iiti.ac.in" required/>
           <div class="field-error" id="email-err">Please enter a valid email address.</div>
         </div>
       </div>
       <div class="grid-2">
         <div class="field">
-          <label for="roll">Roll Number <span class="req">*</span></label>
-          <input type="text" id="roll" name="roll" placeholder="e.g. 21CS001" required />
-          <div class="field-error" id="roll-err">Roll number is required.</div>
+          <label for="roll">Roll Number <span class="req">*</span> <span class="hint">10 digits only</span></label>
+          <input type="text" id="roll" name="roll" placeholder="e.g. 2201CE001X" maxlength="10" inputmode="numeric" required/>
+          <div class="field-error" id="roll-err">Roll number must be exactly 10 digits.</div>
         </div>
         <div class="field">
           <label for="phone">Phone Number <span class="req">*</span></label>
-          <input type="text" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required />
+          <input type="text" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required/>
           <div class="field-error" id="phone-err">Please enter a valid phone number.</div>
         </div>
       </div>
@@ -442,26 +543,22 @@
         <select id="specialization" name="specialization" required>
           <option value="" disabled selected>— Select your specialization —</option>
           <optgroup label="Engineering">
-            <option>Computer Science & Engineering (CSE)</option>
-            <option>CSE – Artificial Intelligence & ML</option>
+            <option>Computer Science &amp; Engineering (CSE)</option>
+            <option>CSE – Artificial Intelligence &amp; ML</option>
             <option>CSE – Data Science</option>
             <option>CSE – Cybersecurity</option>
             <option>Information Technology (IT)</option>
-            <option>Electronics & Communication (ECE)</option>
+            <option>Electronics &amp; Communication (ECE)</option>
             <option>Electrical Engineering (EE)</option>
             <option>Mechanical Engineering (ME)</option>
             <option>Civil Engineering (CE)</option>
           </optgroup>
           <optgroup label="Management">
-            <option>MBA – Marketing</option>
-            <option>MBA – Finance</option>
-            <option>MBA – HR</option>
-            <option>MBA – Operations</option>
+            <option>MBA – Marketing</option><option>MBA – Finance</option>
+            <option>MBA – HR</option><option>MBA – Operations</option>
           </optgroup>
           <optgroup label="Science">
-            <option>MCA</option>
-            <option>M.Sc Computer Science</option>
-            <option>B.Sc Computer Science</option>
+            <option>MCA</option><option>M.Sc Computer Science</option><option>B.Sc Computer Science</option>
           </optgroup>
           <option value="other">Other (specify below)</option>
         </select>
@@ -469,7 +566,7 @@
       </div>
       <div class="field" id="specOtherWrap" style="display:none">
         <label for="specOther">Specify Specialization <span class="req">*</span></label>
-        <input type="text" id="specOther" name="specOther" placeholder="Enter your specialization" />
+        <input type="text" id="specOther" name="specOther" placeholder="Enter your specialization"/>
       </div>
     </div>
   </div>
@@ -478,13 +575,9 @@
   <div class="section">
     <div class="section-header">
       <div class="section-icon">🎯</div>
-      <div>
-        <h2>Career Preferences</h2>
-        <p>Help us match you with the right opportunities</p>
-      </div>
+      <div><h2>Career Preferences</h2><p>Help us match you with the right opportunities</p></div>
     </div>
     <div class="section-body">
-
       <div class="field">
         <label>Field of Interest in Jobs / Internships <span class="req">*</span></label>
         <div class="chip-group">
@@ -497,13 +590,13 @@
           <input type="checkbox" id="f7" name="fields" value="Product Management"><label for="f7">Product Management</label>
           <input type="checkbox" id="f8" name="fields" value="Business Analyst"><label for="f8">Business Analyst</label>
           <input type="checkbox" id="f9" name="fields" value="Finance / FinTech"><label for="f9">Finance / FinTech</label>
-          <input type="checkbox" id="f10" name="fields" value="Marketing / Growth"><label for="f10">Marketing / Growth</label>
-          <input type="checkbox" id="f11" name="fields" value="Research / Academia"><label for="f11">Research / Academia</label>
-          <input type="checkbox" id="f12" name="fields" value="Other"><label for="f12">Other</label>
+          <input type="checkbox" id="f10" name="fields" value="Core Civil Engineering"><label for="f10">Core Civil Engineering</label>
+          <input type="checkbox" id="f11" name="fields" value="Construction Management"><label for="f11">Construction Management</label>
+          <input type="checkbox" id="f12" name="fields" value="Research / Academia"><label for="f12">Research / Academia</label>
+          <input type="checkbox" id="f13" name="fields" value="Other"><label for="f13">Other</label>
         </div>
         <div class="field-error" id="fields-err">Please select at least one field.</div>
       </div>
-
       <div class="field">
         <label>Opportunity Type <span class="req">*</span></label>
         <div class="chip-group">
@@ -514,23 +607,19 @@
         </div>
         <div class="field-error" id="opportunity-err">Please select at least one type.</div>
       </div>
-
       <div class="field">
         <label for="jobRoles">Expected Job Roles <span class="req">*</span> <span class="hint">(one per line or comma separated)</span></label>
-        <textarea id="jobRoles" name="jobRoles" rows="4" placeholder="e.g.&#10;Software Engineer&#10;Data Analyst&#10;Backend Developer" required></textarea>
+        <textarea id="jobRoles" name="jobRoles" rows="4" placeholder="e.g.&#10;Site Engineer&#10;Structural Designer&#10;Project Manager" required></textarea>
         <div class="field-error" id="jobRoles-err">Please describe the roles you expect.</div>
       </div>
-
       <div class="field">
         <label for="expectedCTC">Expected CTC / Stipend <span class="hint">(optional)</span></label>
-        <input type="text" id="expectedCTC" name="expectedCTC" placeholder="e.g. 5-8 LPA or ₹15,000/month for internship" />
+        <input type="text" id="expectedCTC" name="expectedCTC" placeholder="e.g. 5-8 LPA or ₹15,000/month for internship"/>
       </div>
-
       <div class="field">
         <label for="preferredLocation">Preferred Work Location <span class="hint">(optional)</span></label>
-        <input type="text" id="preferredLocation" name="preferredLocation" placeholder="e.g. Bangalore, Pune, Remote" />
+        <input type="text" id="preferredLocation" name="preferredLocation" placeholder="e.g. Mumbai, Delhi, Indore"/>
       </div>
-
     </div>
   </div>
 
@@ -538,10 +627,7 @@
   <div class="section">
     <div class="section-header">
       <div class="section-icon">🎓</div>
-      <div>
-        <h2>Academic Details</h2>
-        <p>Upload documents in PDF format only</p>
-      </div>
+      <div><h2>Academic Details</h2><p>Upload documents in PDF format only</p></div>
     </div>
     <div class="section-body">
 
@@ -550,25 +636,23 @@
       <div class="grid-2">
         <div class="field">
           <label for="board10">Board Name <span class="req">*</span></label>
-          <select id="board10" name="board10" required>
+          <select id="board10" name="board10" required onchange="toggleOther('board10','board10Other')">
             <option value="" disabled selected>— Select Board —</option>
-            <option>CBSE</option>
-            <option>ICSE / ISC</option>
-            <option>State Board (Maharashtra)</option>
-            <option>State Board (UP)</option>
-            <option>State Board (MP)</option>
-            <option>State Board (Rajasthan)</option>
-            <option>State Board (Gujarat)</option>
-            <option>State Board (Karnataka)</option>
-            <option>State Board (Tamil Nadu)</option>
-            <option>State Board (Other)</option>
-            <option>Other</option>
+            <option>CBSE</option><option>ICSE / ISC</option>
+            <option>State Board (Maharashtra)</option><option>State Board (UP)</option>
+            <option>State Board (MP)</option><option>State Board (Rajasthan)</option>
+            <option>State Board (Gujarat)</option><option>State Board (Karnataka)</option>
+            <option>State Board (Tamil Nadu)</option><option>State Board (Other)</option>
+            <option value="other">Other (specify)</option>
           </select>
+          <div class="other-input-wrap" id="board10Other">
+            <input type="text" id="board10OtherVal" placeholder="Enter your board name"/>
+          </div>
           <div class="field-error" id="board10-err">Required.</div>
         </div>
         <div class="field">
           <label for="school10">School Name <span class="req">*</span></label>
-          <input type="text" id="school10" name="school10" placeholder="Full school name" required />
+          <input type="text" id="school10" name="school10" placeholder="Full school name" required/>
           <div class="field-error" id="school10-err">Required.</div>
         </div>
       </div>
@@ -580,24 +664,19 @@
         </div>
         <div class="field">
           <label for="pct10">Percentage <span class="req">*</span></label>
-          <input type="number" id="pct10" name="pct10" placeholder="e.g. 87.60" min="0" max="100" step="0.01" required />
+          <input type="number" id="pct10" name="pct10" placeholder="e.g. 87.60" min="0" max="100" step="0.01" required/>
           <div class="field-error" id="pct10-err">Enter valid percentage (0–100).</div>
         </div>
       </div>
       <div class="field">
         <label>10th Marksheet <span class="req">*</span> <span class="hint">PDF only, max 5MB</span></label>
         <div class="file-drop-zone" id="ms10Zone">
-          <input type="file" id="ms10" name="ms10" accept=".pdf" required />
+          <input type="file" id="ms10" name="ms10" accept=".pdf" required/>
           <div class="file-icon">📄</div>
-          <div class="file-label">Click or drag & drop</div>
+          <div class="file-label">Click or drag &amp; drop</div>
           <div class="file-sub">PDF format only • Max 5MB</div>
         </div>
-        <div class="file-preview" id="ms10Preview">
-          <span>📄</span>
-          <span class="fname" id="ms10Name"></span>
-          <span class="fsize" id="ms10Size"></span>
-          <span class="fremove" onclick="clearFile('ms10')">✕</span>
-        </div>
+        <div class="file-preview" id="ms10Preview"><span>📄</span><span class="fname" id="ms10Name"></span><span class="fsize" id="ms10Size"></span><span class="fremove" onclick="clearFile('ms10')">✕</span></div>
         <div class="field-error" id="ms10-err">Please upload your 10th marksheet (PDF).</div>
       </div>
 
@@ -608,25 +687,23 @@
       <div class="grid-2">
         <div class="field">
           <label for="board12">Board Name <span class="req">*</span></label>
-          <select id="board12" name="board12" required>
+          <select id="board12" name="board12" required onchange="toggleOther('board12','board12Other')">
             <option value="" disabled selected>— Select Board —</option>
-            <option>CBSE</option>
-            <option>ICSE / ISC</option>
-            <option>State Board (Maharashtra)</option>
-            <option>State Board (UP)</option>
-            <option>State Board (MP)</option>
-            <option>State Board (Rajasthan)</option>
-            <option>State Board (Gujarat)</option>
-            <option>State Board (Karnataka)</option>
-            <option>State Board (Tamil Nadu)</option>
-            <option>State Board (Other)</option>
-            <option>Other</option>
+            <option>CBSE</option><option>ICSE / ISC</option>
+            <option>State Board (Maharashtra)</option><option>State Board (UP)</option>
+            <option>State Board (MP)</option><option>State Board (Rajasthan)</option>
+            <option>State Board (Gujarat)</option><option>State Board (Karnataka)</option>
+            <option>State Board (Tamil Nadu)</option><option>State Board (Other)</option>
+            <option value="other">Other (specify)</option>
           </select>
+          <div class="other-input-wrap" id="board12Other">
+            <input type="text" id="board12OtherVal" placeholder="Enter your board name"/>
+          </div>
           <div class="field-error" id="board12-err">Required.</div>
         </div>
         <div class="field">
           <label for="school12">School / College Name <span class="req">*</span></label>
-          <input type="text" id="school12" name="school12" placeholder="Full school/college name" required />
+          <input type="text" id="school12" name="school12" placeholder="Full school/college name" required/>
           <div class="field-error" id="school12-err">Required.</div>
         </div>
       </div>
@@ -638,24 +715,19 @@
         </div>
         <div class="field">
           <label for="pct12">Percentage <span class="req">*</span></label>
-          <input type="number" id="pct12" name="pct12" placeholder="e.g. 82.40" min="0" max="100" step="0.01" required />
+          <input type="number" id="pct12" name="pct12" placeholder="e.g. 82.40" min="0" max="100" step="0.01" required/>
           <div class="field-error" id="pct12-err">Enter valid percentage (0–100).</div>
         </div>
       </div>
       <div class="field">
         <label>12th Marksheet <span class="req">*</span> <span class="hint">PDF only, max 5MB</span></label>
         <div class="file-drop-zone" id="ms12Zone">
-          <input type="file" id="ms12" name="ms12" accept=".pdf" required />
+          <input type="file" id="ms12" name="ms12" accept=".pdf" required/>
           <div class="file-icon">📄</div>
-          <div class="file-label">Click or drag & drop</div>
+          <div class="file-label">Click or drag &amp; drop</div>
           <div class="file-sub">PDF format only • Max 5MB</div>
         </div>
-        <div class="file-preview" id="ms12Preview">
-          <span>📄</span>
-          <span class="fname" id="ms12Name"></span>
-          <span class="fsize" id="ms12Size"></span>
-          <span class="fremove" onclick="clearFile('ms12')">✕</span>
-        </div>
+        <div class="file-preview" id="ms12Preview"><span>📄</span><span class="fname" id="ms12Name"></span><span class="fsize" id="ms12Size"></span><span class="fremove" onclick="clearFile('ms12')">✕</span></div>
         <div class="field-error" id="ms12-err">Please upload your 12th marksheet (PDF).</div>
       </div>
 
@@ -666,12 +738,22 @@
       <div class="grid-2">
         <div class="field">
           <label for="univGrad">University Name <span class="req">*</span></label>
-          <input type="text" id="univGrad" name="univGrad" placeholder="Full university name" required />
+          <select id="univGrad" name="univGrad" required onchange="toggleOther('univGrad','univGradOther')">
+            <option value="" disabled selected>— Select University —</option>
+            <option>IIT Indore</option><option>IIT Bombay</option><option>IIT Delhi</option>
+            <option>IIT Madras</option><option>IIT Kanpur</option><option>IIT Kharagpur</option>
+            <option>NIT Trichy</option><option>NIT Surathkal</option><option>NIT Warangal</option>
+            <option>BITS Pilani</option>
+            <option value="other">Other (specify)</option>
+          </select>
+          <div class="other-input-wrap" id="univGradOther">
+            <input type="text" id="univGradOtherVal" placeholder="Enter your university name"/>
+          </div>
           <div class="field-error" id="univGrad-err">Required.</div>
         </div>
         <div class="field">
           <label for="degreeGrad">Degree / Program <span class="req">*</span></label>
-          <input type="text" id="degreeGrad" name="degreeGrad" placeholder="e.g. B.Tech CSE, BCA, B.Sc" required />
+          <input type="text" id="degreeGrad" name="degreeGrad" placeholder="e.g. B.Tech Civil, B.E., B.Sc" required/>
           <div class="field-error" id="degreeGrad-err">Required.</div>
         </div>
       </div>
@@ -683,32 +765,26 @@
         </div>
         <div class="field">
           <label for="cgpaGrad">Percentage / CGPA <span class="req">*</span></label>
-          <input type="text" id="cgpaGrad" name="cgpaGrad" placeholder="e.g. 8.4 CGPA or 76%" required />
+          <input type="text" id="cgpaGrad" name="cgpaGrad" placeholder="e.g. 8.4 CGPA or 76%" required/>
           <div class="field-error" id="cgpaGrad-err">Required.</div>
         </div>
       </div>
       <div class="field">
         <label>Graduation Marksheet / Degree Certificate <span class="req">*</span> <span class="hint">PDF only, max 5MB</span></label>
         <div class="file-drop-zone" id="msGradZone">
-          <input type="file" id="msGrad" name="msGrad" accept=".pdf" required />
+          <input type="file" id="msGrad" name="msGrad" accept=".pdf" required/>
           <div class="file-icon">📄</div>
-          <div class="file-label">Click or drag & drop</div>
+          <div class="file-label">Click or drag &amp; drop</div>
           <div class="file-sub">PDF format only • Max 5MB</div>
         </div>
-        <div class="file-preview" id="msGradPreview">
-          <span>📄</span>
-          <span class="fname" id="msGradName"></span>
-          <span class="fsize" id="msGradSize"></span>
-          <span class="fremove" onclick="clearFile('msGrad')">✕</span>
-        </div>
+        <div class="file-preview" id="msGradPreview"><span>📄</span><span class="fname" id="msGradName"></span><span class="fsize" id="msGradSize"></span><span class="fremove" onclick="clearFile('msGrad')">✕</span></div>
         <div class="field-error" id="msGrad-err">Please upload your graduation marksheet (PDF).</div>
       </div>
 
       <hr class="divider"/>
 
-      <!-- POSTGRADUATION -->
+      <!-- PG -->
       <div class="subsection-label">🏛️ Post-Graduation <span style="font-family:'DM Sans';font-weight:400;font-size:12px;color:var(--muted)">(if currently enrolled or completed)</span></div>
-      
       <div class="field">
         <label>Are you currently pursuing / have completed a PG program?</label>
         <div class="radio-group">
@@ -716,16 +792,25 @@
           <label class="radio-option"><input type="radio" name="hasPG" value="no" checked onchange="togglePG(false)"> <span>No</span></label>
         </div>
       </div>
-
       <div id="pgFields" style="display:none">
         <div class="grid-2">
           <div class="field">
             <label for="univPG">University Name</label>
-            <input type="text" id="univPG" name="univPG" placeholder="Full university name" />
+            <select id="univPG" name="univPG" onchange="toggleOther('univPG','univPGOther')">
+              <option value="" disabled selected>— Select University —</option>
+              <option>IIT Indore</option><option>IIT Bombay</option><option>IIT Delhi</option>
+              <option>IIT Madras</option><option>IIT Kanpur</option><option>IIT Kharagpur</option>
+              <option>NIT Trichy</option><option>NIT Surathkal</option><option>NIT Warangal</option>
+              <option>BITS Pilani</option>
+              <option value="other">Other (specify)</option>
+            </select>
+            <div class="other-input-wrap" id="univPGOther">
+              <input type="text" id="univPGOtherVal" placeholder="Enter your university name"/>
+            </div>
           </div>
           <div class="field">
             <label for="degreePG">Degree / Program</label>
-            <input type="text" id="degreePG" name="degreePG" placeholder="e.g. M.Tech, MCA, MBA" />
+            <input type="text" id="degreePG" name="degreePG" placeholder="e.g. M.Tech, MCA, MBA"/>
           </div>
         </div>
         <div class="grid-2">
@@ -733,10 +818,8 @@
             <label for="statusPG">Status</label>
             <select id="statusPG" name="statusPG">
               <option value="" disabled selected>— Select —</option>
-              <option>Ongoing (1st Year)</option>
-              <option>Ongoing (2nd Year)</option>
-              <option>Ongoing (Final Semester)</option>
-              <option>Completed</option>
+              <option>Ongoing (1st Year)</option><option>Ongoing (2nd Year)</option>
+              <option>Ongoing (Final Semester)</option><option>Completed</option>
             </select>
           </div>
           <div class="field">
@@ -746,25 +829,19 @@
         </div>
         <div class="field">
           <label for="cgpaPG">Current CGPA / Percentage</label>
-          <input type="text" id="cgpaPG" name="cgpaPG" placeholder="e.g. 8.1 CGPA (up to latest semester)" />
+          <input type="text" id="cgpaPG" name="cgpaPG" placeholder="e.g. 8.1 CGPA (up to latest semester)"/>
         </div>
         <div class="field">
           <label>PG Marksheet / Transcripts <span class="hint">PDF only, max 5MB</span></label>
           <div class="file-drop-zone" id="msPGZone">
-            <input type="file" id="msPG" name="msPG" accept=".pdf" />
+            <input type="file" id="msPG" name="msPG" accept=".pdf"/>
             <div class="file-icon">📄</div>
-            <div class="file-label">Click or drag & drop</div>
+            <div class="file-label">Click or drag &amp; drop</div>
             <div class="file-sub">PDF format only • Max 5MB</div>
           </div>
-          <div class="file-preview" id="msPGPreview">
-            <span>📄</span>
-            <span class="fname" id="msPGName"></span>
-            <span class="fsize" id="msPGSize"></span>
-            <span class="fremove" onclick="clearFile('msPG')">✕</span>
-          </div>
+          <div class="file-preview" id="msPGPreview"><span>📄</span><span class="fname" id="msPGName"></span><span class="fsize" id="msPGSize"></span><span class="fremove" onclick="clearFile('msPG')">✕</span></div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -772,13 +849,9 @@
   <div class="section">
     <div class="section-header">
       <div class="section-icon">🏅</div>
-      <div>
-        <h2>Internships & Certifications</h2>
-        <p>Add all relevant experience and credentials</p>
-      </div>
+      <div><h2>Internships &amp; Certifications</h2><p>Add all relevant experience and credentials</p></div>
     </div>
     <div class="section-body">
-
       <div class="subsection-label">💼 Internship Experience</div>
       <div class="field">
         <label>Have you done any internship(s)?</label>
@@ -787,14 +860,11 @@
           <label class="radio-option"><input type="radio" name="hasIntern" value="no" checked onchange="toggleInternships(false)"> <span>No</span></label>
         </div>
       </div>
-
       <div id="internshipList" style="display:none">
         <div id="internships"></div>
         <button type="button" class="add-btn" onclick="addInternship()">＋ Add Another Internship</button>
       </div>
-
       <hr class="divider"/>
-
       <div class="subsection-label">📜 Certifications</div>
       <div class="field">
         <label>Do you have any certifications?</label>
@@ -803,12 +873,10 @@
           <label class="radio-option"><input type="radio" name="hasCert" value="no" checked onchange="toggleCertifications(false)"> <span>No</span></label>
         </div>
       </div>
-
       <div id="certList" style="display:none">
         <div id="certifications"></div>
         <button type="button" class="add-btn" onclick="addCertification()">＋ Add Another Certification</button>
       </div>
-
     </div>
   </div>
 
@@ -816,15 +884,12 @@
   <div class="section">
     <div class="section-header">
       <div class="section-icon">⚡</div>
-      <div>
-        <h2>Skills & Tools</h2>
-        <p>Technical and soft skills</p>
-      </div>
+      <div><h2>Skills &amp; Tools</h2><p>Technical and soft skills</p></div>
     </div>
     <div class="section-body">
       <div class="field">
         <label for="techSkills">Technical Skills <span class="req">*</span> <span class="hint">comma separated</span></label>
-        <textarea id="techSkills" name="techSkills" rows="3" placeholder="e.g. Python, Java, SQL, React, TensorFlow, AWS, Git..." required></textarea>
+        <textarea id="techSkills" name="techSkills" rows="3" placeholder="e.g. AutoCAD, STAAD Pro, MATLAB, Python, GIS, Revit, MS Project..." required></textarea>
         <div class="field-error" id="techSkills-err">Please list at least a few technical skills.</div>
       </div>
       <div class="field">
@@ -832,8 +897,8 @@
         <textarea id="softSkills" name="softSkills" rows="2" placeholder="e.g. Communication, Team Leadership, Problem Solving..."></textarea>
       </div>
       <div class="field">
-        <label for="languages">Programming Languages <span class="hint">optional</span></label>
-        <input type="text" id="languages" name="languages" placeholder="e.g. Python, C++, JavaScript, Kotlin" />
+        <label for="languages">Programming Languages / Software <span class="hint">optional</span></label>
+        <input type="text" id="languages" name="languages" placeholder="e.g. Python, C++, MATLAB, AutoCAD, STAAD Pro"/>
       </div>
     </div>
   </div>
@@ -842,35 +907,27 @@
   <div class="section">
     <div class="section-header">
       <div class="section-icon">📋</div>
-      <div>
-        <h2>Resume Upload</h2>
-        <p>Upload your latest resume in PDF format</p>
-      </div>
+      <div><h2>Resume Upload</h2><p>Upload your latest resume in PDF format</p></div>
     </div>
     <div class="section-body">
       <div class="field">
         <label>Resume / CV <span class="req">*</span> <span class="hint">PDF only, max 5MB</span></label>
         <div class="file-drop-zone" id="resumeZone">
-          <input type="file" id="resume" name="resume" accept=".pdf" required />
+          <input type="file" id="resume" name="resume" accept=".pdf" required/>
           <div class="file-icon">📋</div>
-          <div class="file-label">Click or drag & drop your Resume</div>
+          <div class="file-label">Click or drag &amp; drop your Resume</div>
           <div class="file-sub">PDF format only • Max 5MB • Latest version please</div>
         </div>
-        <div class="file-preview" id="resumePreview">
-          <span>📋</span>
-          <span class="fname" id="resumeName"></span>
-          <span class="fsize" id="resumeSize"></span>
-          <span class="fremove" onclick="clearFile('resume')">✕</span>
-        </div>
+        <div class="file-preview" id="resumePreview"><span>📋</span><span class="fname" id="resumeName"></span><span class="fsize" id="resumeSize"></span><span class="fremove" onclick="clearFile('resume')">✕</span></div>
         <div class="field-error" id="resume-err">Please upload your resume (PDF).</div>
       </div>
       <div class="field">
         <label for="linkedin">LinkedIn Profile URL <span class="hint">optional</span></label>
-        <input type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile" />
+        <input type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile"/>
       </div>
       <div class="field">
         <label for="github">GitHub / Portfolio URL <span class="hint">optional</span></label>
-        <input type="text" id="github" name="github" placeholder="https://github.com/yourusername" />
+        <input type="text" id="github" name="github" placeholder="https://github.com/yourusername"/>
       </div>
     </div>
   </div>
@@ -878,339 +935,409 @@
   <!-- SUBMIT -->
   <div class="submit-zone">
     <button type="submit" class="submit-btn">Submit Registration →</button>
-    <p class="submit-note">By submitting, you consent to your data being used by the Training & Placement Cell for placement activities.</p>
+    <p class="submit-note">By submitting, you consent to your data being used by CAMC, IIT Indore for placement &amp; internship activities.</p>
   </div>
 
 </form>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-card">
+    <div class="footer-section">
+      <div class="footer-tag">Placement Coordinator</div>
+      <div class="footer-name"><a href="https://www.linkedin.com/in/anirban-roy-4b58b6205" target="_blank" rel="noopener" style="color:white;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);">Mr. Anirban Roy</a></div>
+      <div class="footer-detail">
+        CAMC Coordinator, IIT Indore<br/>
+        📞 <a href="tel:8102220646">8102220646</a>&nbsp;&nbsp;(Call &amp; WhatsApp)<br/>
+        🔗 <a href="https://www.linkedin.com/in/anirban-roy-4b58b6205" target="_blank" rel="noopener">linkedin.com/in/anirban-roy-4b58b6205</a>
+      </div>
+    </div>
+    <div class="footer-divider-label">Developed by</div>
+    <div class="footer-devs">
+      <div class="dev-card">
+        <div class="dev-dept">Astronomy, Astrophysics &amp; Space Engineering</div>
+        <div class="dev-name"><a href="https://www.linkedin.com/in/aninda-pratim-roy" target="_blank" rel="noopener" style="color:white;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.25);">Mr. Aninda Pratim Roy</a></div>
+        <div class="dev-info">
+          IIT Indore<br/>
+          📞 <a href="tel:9613234454">9613234454</a>&nbsp;(Call &amp; WhatsApp)<br/>
+          🔗 <a href="https://www.linkedin.com/in/aninda-pratim-roy" target="_blank" rel="noopener">linkedin.com/in/aninda-pratim-roy</a>
+        </div>
+      </div>
+      <div class="dev-card">
+        <div class="dev-dept">Civil Engineering</div>
+        <div class="dev-name"><a href="https://www.linkedin.com/in/anirban-roy-4b58b6205" target="_blank" rel="noopener" style="color:white;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.25);">Mr. Anirban Roy</a></div>
+        <div class="dev-info">
+          IIT Indore<br/>
+          📞 <a href="tel:8102220646">8102220646</a>&nbsp;(Call &amp; WhatsApp)<br/>
+          🔗 <a href="https://www.linkedin.com/in/anirban-roy-4b58b6205" target="_blank" rel="noopener">linkedin.com/in/anirban-roy-4b58b6205</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 CAMC, IIT Indore · All rights reserved</div>
+  </div>
 </div>
 
 <!-- SUCCESS -->
 <div id="success-overlay">
   <div class="success-icon">🎉</div>
   <div class="success-title">Submitted Successfully!</div>
-  <div class="success-sub">Your data has been recorded. The T&P Cell will contact you regarding upcoming placement drives and internship opportunities.</div>
+  <div class="success-sub">Your data has been recorded. The T&amp;P Cell will contact you regarding upcoming placement drives and internship opportunities.</div>
 </div>
 
 <script>
-// ─── YEAR DROPDOWNS ──────────────────────────────────────────────
+// ─── YEAR DROPDOWNS ───────────────────────────────────────────────
 const yearIds = ['year10','year12','yearGrad','yearPG'];
 const currentYear = new Date().getFullYear();
 yearIds.forEach(id => {
   const sel = document.getElementById(id);
   if (!sel) return;
   const opt0 = document.createElement('option');
-  opt0.value = ''; opt0.textContent = '— Year —'; opt0.disabled = true; opt0.selected = true;
+  opt0.value=''; opt0.textContent='— Year —'; opt0.disabled=true; opt0.selected=true;
   sel.appendChild(opt0);
-  for (let y = currentYear + 3; y >= 1995; y--) {
-    const opt = document.createElement('option');
-    opt.value = y; opt.textContent = y;
-    sel.appendChild(opt);
+  for (let y=currentYear+3; y>=1995; y--) {
+    const opt=document.createElement('option'); opt.value=y; opt.textContent=y; sel.appendChild(opt);
   }
 });
 
 // ─── SPECIALIZATION OTHER ─────────────────────────────────────────
-document.getElementById('specialization').addEventListener('change', function() {
-  document.getElementById('specOtherWrap').style.display = this.value === 'other' ? 'block' : 'none';
+document.getElementById('specialization').addEventListener('change', function(){
+  document.getElementById('specOtherWrap').style.display = this.value==='other' ? 'block' : 'none';
 });
 
+// ─── BOARD / UNIVERSITY "OTHER" TOGGLE ───────────────────────────
+function toggleOther(selectId, wrapId) {
+  const sel=document.getElementById(selectId);
+  const wrap=document.getElementById(wrapId);
+  if (!sel||!wrap) return;
+  if (sel.value==='other') {
+    wrap.classList.add('show');
+  } else {
+    wrap.classList.remove('show');
+    const inp=wrap.querySelector('input[type="text"]');
+    if (inp) inp.value='';
+  }
+}
+
+// Get resolved board/university value (handles "other" case)
+function getBoardValue(selectId, wrapId) {
+  const sel=document.getElementById(selectId);
+  if (!sel) return '';
+  if (sel.value==='other') {
+    const wrap=document.getElementById(wrapId);
+    if (wrap) { const inp=wrap.querySelector('input[type="text"]'); return inp ? inp.value.trim() : ''; }
+    return '';
+  }
+  return sel.value || '';
+}
+
 // ─── PG TOGGLE ────────────────────────────────────────────────────
-function togglePG(show) {
-  document.getElementById('pgFields').style.display = show ? 'block' : 'none';
+function togglePG(show){
+  document.getElementById('pgFields').style.display=show?'block':'none';
 }
 
 // ─── INTERNSHIPS REPEATER ─────────────────────────────────────────
-let internCount = 0;
-function toggleInternships(show) {
-  const wrap = document.getElementById('internshipList');
-  wrap.style.display = show ? 'block' : 'none';
-  if (show && internCount === 0) addInternship();
+let internCount=0;
+function toggleInternships(show){
+  document.getElementById('internshipList').style.display=show?'block':'none';
+  if (show && internCount===0) addInternship();
 }
-function addInternship() {
-  internCount++;
-  const c = internCount;
-  const div = document.createElement('div');
-  div.className = 'repeater-item';
-  div.id = 'intern-' + c;
-  div.innerHTML = `
+function addInternship(){
+  internCount++; const c=internCount;
+  const div=document.createElement('div'); div.className='repeater-item'; div.id='intern-'+c;
+  div.innerHTML=`
     <button type="button" class="remove-btn" onclick="removeItem('intern-${c}')">✕</button>
     <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px;">Internship #${c}</div>
     <div class="grid-2">
       <div class="field"><label>Company Name</label><input type="text" name="intern_company_${c}" placeholder="Company name"/></div>
-      <div class="field"><label>Role / Designation</label><input type="text" name="intern_role_${c}" placeholder="e.g. ML Intern"/></div>
+      <div class="field"><label>Role / Designation</label><input type="text" name="intern_role_${c}" placeholder="e.g. Site Engineer Intern"/></div>
     </div>
     <div class="grid-2">
       <div class="field"><label>Duration</label><input type="text" name="intern_duration_${c}" placeholder="e.g. May 2023 – Jul 2023 (2 months)"/></div>
       <div class="field"><label>Stipend <span style="font-weight:400;color:var(--muted);font-size:12px">(optional)</span></label><input type="text" name="intern_stipend_${c}" placeholder="e.g. ₹10,000/month or Unpaid"/></div>
     </div>
-    <div class="field"><label>Brief Description <span style="font-weight:400;color:var(--muted);font-size:12px">(optional)</span></label><textarea name="intern_desc_${c}" rows="2" placeholder="What did you work on?"></textarea></div>
-  `;
+    <div class="field"><label>Brief Description <span style="font-weight:400;color:var(--muted);font-size:12px">(optional)</span></label><textarea name="intern_desc_${c}" rows="2" placeholder="What did you work on?"></textarea></div>`;
   document.getElementById('internships').appendChild(div);
 }
 
 // ─── CERTIFICATIONS REPEATER ──────────────────────────────────────
-let certCount = 0;
-function toggleCertifications(show) {
-  const wrap = document.getElementById('certList');
-  wrap.style.display = show ? 'block' : 'none';
-  if (show && certCount === 0) addCertification();
+let certCount=0;
+function toggleCertifications(show){
+  document.getElementById('certList').style.display=show?'block':'none';
+  if (show && certCount===0) addCertification();
 }
-function addCertification() {
-  certCount++;
-  const c = certCount;
-  const div = document.createElement('div');
-  div.className = 'repeater-item';
-  div.id = 'cert-' + c;
-  div.innerHTML = `
+function addCertification(){
+  certCount++; const c=certCount;
+  const div=document.createElement('div'); div.className='repeater-item'; div.id='cert-'+c;
+  div.innerHTML=`
     <button type="button" class="remove-btn" onclick="removeItem('cert-${c}')">✕</button>
     <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px;">Certification #${c}</div>
     <div class="grid-2">
-      <div class="field"><label>Certification Name</label><input type="text" name="cert_name_${c}" placeholder="e.g. AWS Cloud Practitioner"/></div>
-      <div class="field"><label>Issuing Organization</label><input type="text" name="cert_org_${c}" placeholder="e.g. Amazon, Coursera, NPTEL"/></div>
+      <div class="field"><label>Certification Name</label><input type="text" name="cert_name_${c}" placeholder="e.g. AutoCAD Certified Professional"/></div>
+      <div class="field"><label>Issuing Organization</label><input type="text" name="cert_org_${c}" placeholder="e.g. Autodesk, Coursera, NPTEL"/></div>
     </div>
     <div class="grid-2">
       <div class="field"><label>Issue Date</label><input type="text" name="cert_date_${c}" placeholder="e.g. March 2024"/></div>
       <div class="field"><label>Credential ID / Link <span style="font-weight:400;color:var(--muted);font-size:12px">(optional)</span></label><input type="text" name="cert_id_${c}" placeholder="ID or verify URL"/></div>
-    </div>
-  `;
+    </div>`;
   document.getElementById('certifications').appendChild(div);
 }
 
-function removeItem(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-}
+function removeItem(id){ const el=document.getElementById(id); if(el) el.remove(); }
 
 // ─── FILE UPLOAD HANDLING ─────────────────────────────────────────
-const fileConfigs = [
-  { id: 'ms10', zone: 'ms10Zone', preview: 'ms10Preview', name: 'ms10Name', size: 'ms10Size' },
-  { id: 'ms12', zone: 'ms12Zone', preview: 'ms12Preview', name: 'ms12Name', size: 'ms12Size' },
-  { id: 'msGrad', zone: 'msGradZone', preview: 'msGradPreview', name: 'msGradName', size: 'msGradSize' },
-  { id: 'msPG', zone: 'msPGZone', preview: 'msPGPreview', name: 'msPGName', size: 'msPGSize' },
-  { id: 'resume', zone: 'resumeZone', preview: 'resumePreview', name: 'resumeName', size: 'resumeSize' },
+const fileConfigs=[
+  {id:'ms10',zone:'ms10Zone',preview:'ms10Preview',name:'ms10Name',size:'ms10Size'},
+  {id:'ms12',zone:'ms12Zone',preview:'ms12Preview',name:'ms12Name',size:'ms12Size'},
+  {id:'msGrad',zone:'msGradZone',preview:'msGradPreview',name:'msGradName',size:'msGradSize'},
+  {id:'msPG',zone:'msPGZone',preview:'msPGPreview',name:'msPGName',size:'msPGSize'},
+  {id:'resume',zone:'resumeZone',preview:'resumePreview',name:'resumeName',size:'resumeSize'},
 ];
-
-fileConfigs.forEach(fc => {
-  const input = document.getElementById(fc.id);
-  const zone = document.getElementById(fc.zone);
-  if (!input || !zone) return;
-
-  input.addEventListener('change', () => handleFile(fc));
-
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    if (e.dataTransfer.files.length) {
-      const dt = new DataTransfer();
-      dt.items.add(e.dataTransfer.files[0]);
-      input.files = dt.files;
-      handleFile(fc);
-    }
+fileConfigs.forEach(fc=>{
+  const input=document.getElementById(fc.id);
+  const zone=document.getElementById(fc.zone);
+  if(!input||!zone) return;
+  input.addEventListener('change',()=>handleFile(fc));
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault(); zone.classList.remove('drag-over');
+    if(e.dataTransfer.files.length){const dt=new DataTransfer();dt.items.add(e.dataTransfer.files[0]);input.files=dt.files;handleFile(fc);}
   });
 });
-
-function handleFile(fc) {
-  const input = document.getElementById(fc.id);
-  const zone = document.getElementById(fc.zone);
-  const preview = document.getElementById(fc.preview);
-  const nameEl = document.getElementById(fc.name);
-  const sizeEl = document.getElementById(fc.size);
-  const errEl = document.getElementById(fc.id + '-err');
-
-  if (!input.files || !input.files[0]) return;
-  const file = input.files[0];
-
-  // Validate PDF
-  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-    showErr(fc.id + '-err', 'Only PDF files are accepted.');
-    input.value = '';
-    return;
+function handleFile(fc){
+  const input=document.getElementById(fc.id);
+  const zone=document.getElementById(fc.zone);
+  const preview=document.getElementById(fc.preview);
+  const nameEl=document.getElementById(fc.name);
+  const sizeEl=document.getElementById(fc.size);
+  const errEl=document.getElementById(fc.id+'-err');
+  if(!input.files||!input.files[0]) return;
+  const file=input.files[0];
+  if(file.type!=='application/pdf'&&!file.name.toLowerCase().endsWith('.pdf')){
+    showErr(fc.id+'-err','Only PDF files are accepted.'); input.value=''; return;
   }
-  // Validate size (5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    showErr(fc.id + '-err', 'File too large. Maximum size is 5MB.');
-    input.value = '';
-    return;
-  }
-
-  nameEl.textContent = file.name;
-  sizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
-  preview.classList.add('show');
-  zone.classList.add('has-file');
-  if (errEl) { errEl.classList.remove('show'); }
+  if(file.size>5*1024*1024){showErr(fc.id+'-err','File too large. Maximum size is 5MB.'); input.value=''; return;}
+  nameEl.textContent=file.name; sizeEl.textContent=(file.size/1024).toFixed(1)+' KB';
+  preview.classList.add('show'); zone.classList.add('has-file');
+  if(errEl) errEl.classList.remove('show');
 }
-
-function clearFile(id) {
-  const input = document.getElementById(id);
-  const fc = fileConfigs.find(f => f.id === id);
-  if (!fc) return;
-  input.value = '';
+function clearFile(id){
+  const input=document.getElementById(id);
+  const fc=fileConfigs.find(f=>f.id===id);
+  if(!fc) return;
+  input.value='';
   document.getElementById(fc.preview).classList.remove('show');
   document.getElementById(fc.zone).classList.remove('has-file');
 }
 
+// ─── ROLL NUMBER — digits only, max 10 ───────────────────────────
+document.getElementById('roll').addEventListener('input', function(){
+  this.value=this.value.replace(/\D/g,'').slice(0,10);
+});
+
 // ─── PROGRESS TRACKER ─────────────────────────────────────────────
-const requiredFields = ['name','email','roll','phone','specialization','jobRoles','board10','school10','year10','pct10','ms10','board12','school12','year12','pct12','ms12','univGrad','degreeGrad','yearGrad','cgpaGrad','msGrad','techSkills','resume'];
-
-function updateProgress() {
-  let filled = 0;
-  requiredFields.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (el.type === 'file') { if (el.files && el.files.length) filled++; }
-    else if (el.value.trim()) filled++;
+const requiredFields=['name','email','roll','phone','specialization','jobRoles','board10','school10','year10','pct10','ms10','board12','school12','year12','pct12','ms12','univGrad','degreeGrad','yearGrad','cgpaGrad','msGrad','techSkills','resume'];
+function updateProgress(){
+  let filled=0;
+  requiredFields.forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    if(el.type==='file'){if(el.files&&el.files.length) filled++;}
+    else if(el.value.trim()) filled++;
   });
-  const pct = Math.round((filled / requiredFields.length) * 100);
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = pct + '% complete';
+  const pct=Math.round((filled/requiredFields.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=pct+'% complete';
 }
-
-document.getElementById('mainForm').addEventListener('input', updateProgress);
-document.getElementById('mainForm').addEventListener('change', updateProgress);
+document.getElementById('mainForm').addEventListener('input',updateProgress);
+document.getElementById('mainForm').addEventListener('change',updateProgress);
 
 // ─── VALIDATION HELPERS ───────────────────────────────────────────
-function showErr(id, msg) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (msg) el.textContent = msg;
-  el.classList.add('show');
-}
-function clearErr(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('show');
-}
-function markInvalid(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.add('error');
-}
-function markValid(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('error');
-}
+function showErr(id,msg){const el=document.getElementById(id);if(!el)return;if(msg)el.textContent=msg;el.classList.add('show');}
+function clearErr(id){const el=document.getElementById(id);if(el)el.classList.remove('show');}
+function markInvalid(id){const el=document.getElementById(id);if(el)el.classList.add('error');}
+function markValid(id){const el=document.getElementById(id);if(el)el.classList.remove('error');}
 
 // ─── FORM SUBMIT ──────────────────────────────────────────────────
-document.getElementById('mainForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  let valid = true;
-
-  // Helper
-  function check(id, condition, errMsg) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (!condition(el)) {
-      markInvalid(id); showErr(id + '-err', errMsg); valid = false;
-    } else { markValid(id); clearErr(id + '-err'); }
+document.getElementById('mainForm').addEventListener('submit',function(e){
+  e.preventDefault(); let valid=true;
+  function check(id,condition,errMsg){
+    const el=document.getElementById(id); if(!el) return;
+    if(!condition(el)){markInvalid(id);showErr(id+'-err',errMsg);valid=false;}
+    else{markValid(id);clearErr(id+'-err');}
   }
+  check('name',el=>el.value.trim().length>1,'Please enter your full name.');
+  check('email',el=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()),'Enter a valid email.');
+  check('roll',el=>/^\d{10}$/.test(el.value.trim()),'Roll number must be exactly 10 digits.');
+  check('phone',el=>/^[\d\s\+\-\(\)]{7,15}$/.test(el.value.trim()),'Enter a valid phone number.');
+  check('specialization',el=>el.value!=='','Please select your specialization.');
 
-  // Personal
-  check('name', el => el.value.trim().length > 1, 'Please enter your full name.');
-  check('email', el => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()), 'Enter a valid email.');
-  check('roll', el => el.value.trim().length > 0, 'Roll number is required.');
-  check('phone', el => /^[\d\s\+\-\(\)]{7,15}$/.test(el.value.trim()), 'Enter a valid phone number.');
-  check('specialization', el => el.value !== '', 'Please select your specialization.');
+  const fieldsChecked=document.querySelectorAll('input[name="fields"]:checked').length;
+  if(!fieldsChecked){showErr('fields-err','Select at least one field.');valid=false;}else clearErr('fields-err');
+  const oppChecked=document.querySelectorAll('input[name="opportunity"]:checked').length;
+  if(!oppChecked){showErr('opportunity-err','Select at least one type.');valid=false;}else clearErr('opportunity-err');
+  check('jobRoles',el=>el.value.trim().length>2,'Describe expected roles.');
 
-  // Career
-  const fieldsChecked = document.querySelectorAll('input[name="fields"]:checked').length;
-  if (!fieldsChecked) { showErr('fields-err', 'Select at least one field.'); valid = false; }
-  else clearErr('fields-err');
-  const oppChecked = document.querySelectorAll('input[name="opportunity"]:checked').length;
-  if (!oppChecked) { showErr('opportunity-err', 'Select at least one type.'); valid = false; }
-  else clearErr('opportunity-err');
-  check('jobRoles', el => el.value.trim().length > 2, 'Describe expected roles.');
+  // Board 10
+  const b10=getBoardValue('board10','board10Other');
+  if(!b10){markInvalid('board10');showErr('board10-err','Required.');valid=false;}else{markValid('board10');clearErr('board10-err');}
+  check('school10',el=>el.value.trim(),'Required.');
+  check('year10',el=>el.value,'Required.');
+  check('pct10',el=>el.value>=0&&el.value<=100&&el.value!=='','Enter valid percentage.');
+  const ms10=document.getElementById('ms10');
+  if(!ms10.files||!ms10.files.length){markInvalid('ms10');showErr('ms10-err','Upload 10th marksheet (PDF).');valid=false;}else clearErr('ms10-err');
 
-  // Academic
-  check('board10', el => el.value, 'Required.'); check('school10', el => el.value.trim(), 'Required.'); check('year10', el => el.value, 'Required.');
-  check('pct10', el => el.value >= 0 && el.value <= 100 && el.value !== '', 'Enter valid percentage.');
-  const ms10 = document.getElementById('ms10');
-  if (!ms10.files || !ms10.files.length) { markInvalid('ms10'); showErr('ms10-err', 'Upload 10th marksheet (PDF).'); valid = false; } else clearErr('ms10-err');
+  // Board 12
+  const b12=getBoardValue('board12','board12Other');
+  if(!b12){markInvalid('board12');showErr('board12-err','Required.');valid=false;}else{markValid('board12');clearErr('board12-err');}
+  check('school12',el=>el.value.trim(),'Required.');
+  check('year12',el=>el.value,'Required.');
+  check('pct12',el=>el.value>=0&&el.value<=100&&el.value!=='','Enter valid percentage.');
+  const ms12=document.getElementById('ms12');
+  if(!ms12.files||!ms12.files.length){markInvalid('ms12');showErr('ms12-err','Upload 12th marksheet (PDF).');valid=false;}else clearErr('ms12-err');
 
-  check('board12', el => el.value, 'Required.'); check('school12', el => el.value.trim(), 'Required.'); check('year12', el => el.value, 'Required.');
-  check('pct12', el => el.value >= 0 && el.value <= 100 && el.value !== '', 'Enter valid percentage.');
-  const ms12 = document.getElementById('ms12');
-  if (!ms12.files || !ms12.files.length) { markInvalid('ms12'); showErr('ms12-err', 'Upload 12th marksheet (PDF).'); valid = false; } else clearErr('ms12-err');
+  // Graduation
+  const ug=getBoardValue('univGrad','univGradOther');
+  if(!ug){markInvalid('univGrad');showErr('univGrad-err','Required.');valid=false;}else{markValid('univGrad');clearErr('univGrad-err');}
+  check('degreeGrad',el=>el.value.trim(),'Required.');
+  check('yearGrad',el=>el.value,'Required.');
+  check('cgpaGrad',el=>el.value.trim(),'Required.');
+  const msGrad=document.getElementById('msGrad');
+  if(!msGrad.files||!msGrad.files.length){markInvalid('msGrad');showErr('msGrad-err','Upload graduation marksheet (PDF).');valid=false;}else clearErr('msGrad-err');
 
-  check('univGrad', el => el.value.trim(), 'Required.'); check('degreeGrad', el => el.value.trim(), 'Required.'); check('yearGrad', el => el.value, 'Required.');
-  check('cgpaGrad', el => el.value.trim(), 'Required.');
-  const msGrad = document.getElementById('msGrad');
-  if (!msGrad.files || !msGrad.files.length) { markInvalid('msGrad'); showErr('msGrad-err', 'Upload graduation marksheet (PDF).'); valid = false; } else clearErr('msGrad-err');
+  check('techSkills',el=>el.value.trim().length>2,'List your technical skills.');
+  const resumeEl=document.getElementById('resume');
+  if(!resumeEl.files||!resumeEl.files.length){markInvalid('resume');showErr('resume-err','Upload your resume (PDF).');valid=false;}else clearErr('resume-err');
 
-  // Skills & Resume
-  check('techSkills', el => el.value.trim().length > 2, 'List your technical skills.');
-  const resumeEl = document.getElementById('resume');
-  if (!resumeEl.files || !resumeEl.files.length) { markInvalid('resume'); showErr('resume-err', 'Upload your resume (PDF).'); valid = false; } else clearErr('resume-err');
-
-  if (!valid) {
-    // Scroll to first error
-    const firstErr = document.querySelector('.error, .field-error.show');
-    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if(!valid){
+    const firstErr=document.querySelector('.error,.field-error.show');
+    if(firstErr) firstErr.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
 
- // SUCCESS — Send data to Google Sheets
-const formData = {
-  name: document.getElementById('name').value,
-  email: document.getElementById('email').value,
-  roll: document.getElementById('roll').value,
-  phone: document.getElementById('phone').value,
-  specialization: document.getElementById('specialization').value,
-  fields: [...document.querySelectorAll('input[name="fields"]:checked')].map(el => el.value).join(', '),
-  opportunity: [...document.querySelectorAll('input[name="opportunity"]:checked')].map(el => el.value).join(', '),
-  jobRoles: document.getElementById('jobRoles').value,
-  expectedCTC: document.getElementById('expectedCTC').value,
-  preferredLocation: document.getElementById('preferredLocation').value,
-  board10: document.getElementById('board10').value,
-  school10: document.getElementById('school10').value,
-  year10: document.getElementById('year10').value,
-  pct10: document.getElementById('pct10').value,
-  board12: document.getElementById('board12').value,
-  school12: document.getElementById('school12').value,
-  year12: document.getElementById('year12').value,
-  pct12: document.getElementById('pct12').value,
-  univGrad: document.getElementById('univGrad').value,
-  degreeGrad: document.getElementById('degreeGrad').value,
-  yearGrad: document.getElementById('yearGrad').value,
-  cgpaGrad: document.getElementById('cgpaGrad').value,
-  univPG: document.getElementById('univPG').value,
-  degreePG: document.getElementById('degreePG').value,
-  statusPG: document.getElementById('statusPG').value,
-  yearPG: document.getElementById('yearPG').value,
-  cgpaPG: document.getElementById('cgpaPG').value,
-  techSkills: document.getElementById('techSkills').value,
-  softSkills: document.getElementById('softSkills').value,
-  languages: document.getElementById('languages').value,
-  linkedin: document.getElementById('linkedin').value,
-  github: document.getElementById('github').value,
-};
+  const formData={
+    name:document.getElementById('name').value,
+    email:document.getElementById('email').value,
+    roll:document.getElementById('roll').value,
+    phone:document.getElementById('phone').value,
+    specialization:document.getElementById('specialization').value==='other'?document.getElementById('specOther').value:document.getElementById('specialization').value,
+    fields:[...document.querySelectorAll('input[name="fields"]:checked')].map(el=>el.value).join(', '),
+    opportunity:[...document.querySelectorAll('input[name="opportunity"]:checked')].map(el=>el.value).join(', '),
+    jobRoles:document.getElementById('jobRoles').value,
+    expectedCTC:document.getElementById('expectedCTC').value,
+    preferredLocation:document.getElementById('preferredLocation').value,
+    board10:getBoardValue('board10','board10Other'),
+    school10:document.getElementById('school10').value,
+    year10:document.getElementById('year10').value,
+    pct10:document.getElementById('pct10').value,
+    board12:getBoardValue('board12','board12Other'),
+    school12:document.getElementById('school12').value,
+    year12:document.getElementById('year12').value,
+    pct12:document.getElementById('pct12').value,
+    univGrad:getBoardValue('univGrad','univGradOther'),
+    degreeGrad:document.getElementById('degreeGrad').value,
+    yearGrad:document.getElementById('yearGrad').value,
+    cgpaGrad:document.getElementById('cgpaGrad').value,
+    univPG:getBoardValue('univPG','univPGOther'),
+    degreePG:document.getElementById('degreePG').value,
+    statusPG:document.getElementById('statusPG').value,
+    yearPG:document.getElementById('yearPG').value,
+    cgpaPG:document.getElementById('cgpaPG').value,
+    techSkills:document.getElementById('techSkills').value,
+    softSkills:document.getElementById('softSkills').value,
+    languages:document.getElementById('languages').value,
+    linkedin:document.getElementById('linkedin').value,
+    github:document.getElementById('github').value,
+  };
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWiuq1NYNFzAcZZaBVZCfisa2x9kZ04mkEfsegv1jdnTfXumh9NRUeyojSOcxHGW7_IA/exec'; // 👈 replace this
+  const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzWiuq1NYNFzAcZZaBVZCfisa2x9kZ04mkEfsegv1jdnTfXumh9NRUeyojSOcxHGW7_IA/exec';
 
-fetch(SCRIPT_URL, {
-  method: 'POST',
-  body: JSON.stringify(formData)
-})
-.then(res => res.json())
-.then(data => {
-  if (data.result === 'success') {
-    document.getElementById('success-overlay').classList.add('show');
-    document.getElementById('progressFill').style.width = '100%';
-    document.getElementById('progressLabel').textContent = '100% complete';
-  } else {
-    alert('Something went wrong. Please try again.');
-  }
-})
-.catch(() => {
-  alert('Submission failed. Check your internet connection and try again.');
-});
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(formData)})
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.result==='success'){
+      document.getElementById('success-overlay').classList.add('show');
+      document.getElementById('progressFill').style.width='100%';
+      document.getElementById('progressLabel').textContent='100% complete';
+    }else{alert('Something went wrong. Please try again.');}
+  })
+  .catch(()=>alert('Submission failed. Check your internet connection and try again.'));
 });
 
-// Live validation feedback
-['name','email','roll','phone','board10','school10','pct10','board12','school12','pct12','univGrad','degreeGrad','cgpaGrad','jobRoles','techSkills'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('blur', () => { if (el.value.trim()) { markValid(id); clearErr(id + '-err'); } });
+// Live validation feedback on blur
+['name','email','roll','phone','school10','pct10','school12','pct12','degreeGrad','cgpaGrad','jobRoles','techSkills'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('blur',()=>{if(el.value.trim()){markValid(id);clearErr(id+'-err');}});
 });
 
 updateProgress();
 </script>
+
+<script>
+// ── ANIMATED CANVAS BACKGROUND ──
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes=[], raf;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initNodes(){
+    nodes = [];
+    const count = Math.floor((W*H)/22000);
+    for(let i=0;i<count;i++){
+      nodes.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        vx:(Math.random()-0.5)*0.35,
+        vy:(Math.random()-0.5)*0.35,
+        r: Math.random()*2.5+1,
+        type: Math.random() > 0.7 ? 'gold' : 'green'
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // Draw connecting lines between nearby nodes
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<130){
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          const alpha=(1-dist/130)*0.25;
+          ctx.strokeStyle=`rgba(0,255,229,${alpha * 0.7})`;
+          ctx.lineWidth=0.8;
+          ctx.stroke();
+        }
+      }
+    }
+    // Draw nodes
+    nodes.forEach(n=>{
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle = n.type==='gold' ? 'rgba(255,45,120,0.7)' : 'rgba(0,255,229,0.5)';
+      ctx.fill();
+    });
+    // Move nodes
+    nodes.forEach(n=>{
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+    });
+    raf=requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize',()=>{ cancelAnimationFrame(raf); resize(); initNodes(); draw(); });
+  resize(); initNodes(); draw();
+})();
+</script>
+
 </body>
 </html>
